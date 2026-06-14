@@ -5,366 +5,2262 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Englisch Trainingscamp — Vergangenheitsformen</title>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: #0f0f1a;
-      color: #e2e8f0;
-      line-height: 1.7;
-      padding: 2rem 1rem;
+    /* ─────────────────────────────────────────────────────────────
+       RESET & CSS VARIABLES
+    ───────────────────────────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    .container { max-width: 900px; margin: 0 auto; }
 
-    h1 {
+    :root {
+      --bg:           #0d0d1a;
+      --surface:      #161628;
+      --surface2:     #1e1e35;
+      --surface3:     #252540;
+      --border:       #2a2a45;
+      --border2:      #333358;
+      --purple:       #a78bfa;
+      --purple-d:     #7c3aed;
+      --purple-dd:    #5b21b6;
+      --blue:         #60a5fa;
+      --blue-d:       #2563eb;
+      --green:        #34d399;
+      --green-d:      #059669;
+      --red:          #f87171;
+      --red-d:        #dc2626;
+      --yellow:       #fbbf24;
+      --orange:       #fb923c;
+      --pink:         #f472b6;
+      --text:         #e2e8f0;
+      --muted:        #94a3b8;
+      --muted2:       #64748b;
+      --radius:       12px;
+      --radius-sm:    8px;
+      --shadow:       0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       SCROLLBAR
+    ───────────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--border2); }
+
+    /* ─────────────────────────────────────────────────────────────
+       UTILITY
+    ───────────────────────────────────────────────────────────── */
+    .hidden { display: none !important; }
+    code {
+      font-family: 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+      background: var(--surface2);
+      padding: 0.15em 0.45em;
+      border-radius: 5px;
+      color: var(--blue);
+      font-size: 0.85em;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       HEADER
+    ───────────────────────────────────────────────────────────── */
+    .site-header {
+      background: linear-gradient(135deg, #12002e 0%, #0d0d1a 55%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.8rem 1rem 2.2rem;
       text-align: center;
-      font-size: 2rem;
-      background: linear-gradient(135deg, #a78bfa, #60a5fa);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .site-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 0%, rgba(124,58,237,0.22) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 0%, rgba(37,99,235,0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .site-header h1 {
+      position: relative;
+      font-size: clamp(1.7rem, 4.5vw, 2.6rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #c4b5fd 0%, #93c5fd 50%, #6ee7b7 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 0.3rem;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
     }
-    .subtitle {
-      text-align: center;
-      color: #94a3b8;
-      margin-bottom: 3rem;
+
+    .site-header .subtitle {
+      position: relative;
+      color: var(--muted);
+      margin-top: 0.5rem;
       font-size: 0.95rem;
     }
 
-    section {
-      background: #1e1e2e;
-      border: 1px solid #2d2d44;
-      border-radius: 12px;
-      padding: 1.8rem;
+    .header-badges {
+      display: flex;
+      justify-content: center;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      margin-top: 1.2rem;
+      position: relative;
+    }
+
+    .hbadge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .hbadge.score {
+      color: var(--yellow);
+      border-color: rgba(251,191,36,0.3);
+      background: rgba(251,191,36,0.08);
+      font-weight: 700;
+    }
+
+    .hbadge.score strong {
+      font-size: 1rem;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       TAB BAR
+    ───────────────────────────────────────────────────────────── */
+    .tab-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 13, 26, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 0 0.5rem;
+    }
+
+    .tab-bar::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      flex-shrink: 0;
+      padding: 0.85rem 1.05rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-bottom: 2.5px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color 0.18s, border-color 0.18s;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+    /* ─────────────────────────────────────────────────────────────
+       PANELS
+    ───────────────────────────────────────────────────────────── */
+    .tab-panel {
+      display: none;
+      padding: 2rem 1rem 5rem;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .tab-panel.active { display: block; }
+
+    /* ─────────────────────────────────────────────────────────────
+       SECTION HEADER
+    ───────────────────────────────────────────────────────────── */
+    .sec-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--purple);
+      margin-bottom: 0.4rem;
+    }
+
+    .sec-title {
+      font-size: clamp(1.2rem, 3vw, 1.7rem);
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      line-height: 1.2;
+    }
+
+    .sec-desc {
+      color: var(--muted);
+      font-size: 0.88rem;
       margin-bottom: 2rem;
     }
-    h2 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #a78bfa;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      border-bottom: 2px solid #2d2d44;
-      padding-bottom: 0.6rem;
-      margin-bottom: 1.2rem;
+
+    /* ─────────────────────────────────────────────────────────────
+       BUTTONS
+    ───────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: all 0.15s;
+      background: var(--surface2);
+      color: var(--text);
+      user-select: none;
+      white-space: nowrap;
     }
 
-    /* Tables */
-    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; overflow-x: auto; display: block; }
-    th {
-      background: #2d2d44;
-      color: #c4b5fd;
+    .btn:hover {
+      background: var(--surface3);
+      border-color: var(--purple);
+      color: var(--purple);
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: var(--purple-d);
+      border-color: var(--purple-d);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--purple-dd);
+      border-color: var(--purple-dd);
+      color: #fff;
+    }
+
+    .btn-success {
+      background: rgba(5,150,105,0.2);
+      border-color: var(--green-d);
+      color: var(--green);
+    }
+
+    .btn-success:hover {
+      background: rgba(5,150,105,0.35);
+      color: var(--green);
+      border-color: var(--green);
+    }
+
+    .btn-danger {
+      background: rgba(220,38,38,0.15);
+      border-color: var(--red-d);
+      color: var(--red);
+    }
+
+    .btn-danger:hover {
+      background: rgba(220,38,38,0.25);
+      color: var(--red);
+      border-color: var(--red);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       CHEAT SHEET — TABLE
+    ───────────────────────────────────────────────────────────── */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .cheat-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      min-width: 600px;
+    }
+
+    .cheat-table thead tr { background: var(--surface3); }
+
+    .cheat-table th {
+      padding: 0.8rem 1rem;
       text-align: left;
-      padding: 0.7rem 0.9rem;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--purple);
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+    }
+
+    .cheat-table td {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .cheat-table tbody tr:last-child td { border-bottom: none; }
+
+    .cheat-table tbody tr {
+      background: var(--surface);
+      transition: background 0.15s;
+    }
+
+    .cheat-table tbody tr:hover { background: var(--surface2); }
+
+    .tense-name { font-weight: 700; color: var(--text); }
+
+    .formula {
+      font-family: 'Fira Code', monospace;
+      background: rgba(96,165,250,0.12);
+      border: 1px solid rgba(96,165,250,0.25);
+      padding: 0.2em 0.55em;
+      border-radius: 6px;
+      color: var(--blue);
+      font-size: 0.82em;
+      white-space: nowrap;
+      display: inline-block;
+    }
+
+    .signals {
+      color: var(--yellow);
+      font-size: 0.83em;
+      line-height: 1.5;
+    }
+
+    .cheat-table .example em {
+      color: var(--green);
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       RULES GRID
+    ───────────────────────────────────────────────────────────── */
+    .rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 1.8rem;
+    }
+
+    .rule-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--blue);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.2rem;
+      font-size: 0.875rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .rule-card:hover {
+      border-left-color: var(--purple);
+      transform: translateY(-2px);
+    }
+
+    .rule-card .rule-icon {
+      font-size: 1.3rem;
+      line-height: 1;
+      margin-bottom: 0.55rem;
+    }
+
+    .rule-card h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+
+    .rule-card p {
+      color: var(--muted);
+      font-size: 0.83rem;
+      line-height: 1.55;
+    }
+
+    .rule-card strong { color: var(--purple); }
+
+    /* ─────────────────────────────────────────────────────────────
+       FLASHCARDS
+    ───────────────────────────────────────────────────────────── */
+    .card-toolbar {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-toolbar .spacer { flex: 1; }
+
+    .card-counter-text {
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 600;
+    }
+
+    .progress-wrap {
+      background: var(--surface2);
+      border-radius: 999px;
+      height: 5px;
+      margin-bottom: 1.4rem;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--purple-d), var(--blue));
+      transition: width 0.35s ease;
+      min-width: 4px;
+    }
+
+    /* Flip card 3D */
+    .fc-arena {
+      perspective: 1400px;
+      max-width: 680px;
+      margin: 0 auto 1.5rem;
+      width: 100%;
+    }
+
+    .flashcard {
+      width: 100%;
+      min-height: 240px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.52s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .flashcard.is-flipped { transform: rotateY(180deg); }
+
+    .fc-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2.2rem 2rem;
+      text-align: center;
+    }
+
+    .fc-front {
+      background: linear-gradient(145deg, var(--surface) 0%, var(--surface2) 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .fc-back {
+      background: linear-gradient(145deg, #051c12 0%, #0d1f2d 100%);
+      border-color: rgba(52,211,153,0.35);
+      box-shadow: 0 4px 24px rgba(52,211,153,0.08);
+      transform: rotateY(180deg);
+    }
+
+    .fc-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1.1rem;
+      padding: 0.2em 0.7em;
+      border-radius: 999px;
+    }
+
+    .fc-front .fc-tag {
+      color: var(--purple);
+      background: rgba(167,139,250,0.12);
+      border: 1px solid rgba(167,139,250,0.25);
+    }
+
+    .fc-back .fc-tag {
+      color: var(--green);
+      background: rgba(52,211,153,0.1);
+      border: 1px solid rgba(52,211,153,0.25);
+    }
+
+    .fc-question {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.5;
+      max-width: 520px;
+    }
+
+    .fc-answer {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--green);
+      font-family: 'Fira Code', monospace;
+      line-height: 1.55;
+      max-width: 520px;
+    }
+
+    .fc-hint {
+      margin-top: 1.4rem;
+      font-size: 0.75rem;
+      color: var(--muted2);
       letter-spacing: 0.05em;
     }
-    td { padding: 0.65rem 0.9rem; border-bottom: 1px solid #2d2d44; vertical-align: top; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #252538; }
-    code { background: #2d2d44; padding: 0.1em 0.4em; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 0.85em; color: #7dd3fc; }
 
-    /* Faustregeln */
-    .rules { display: grid; gap: 0.7rem; margin-top: 1.2rem; }
-    .rule {
-      background: #252538;
-      border-left: 3px solid #60a5fa;
-      padding: 0.7rem 1rem;
-      border-radius: 0 8px 8px 0;
-      font-size: 0.9rem;
+    /* Rating buttons */
+    .rating-row {
+      display: flex;
+      gap: 0.7rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
     }
-    .rule strong { color: #7dd3fc; }
 
-    /* Flashcards */
-    .csv-box {
-      background: #111120;
-      border: 1px solid #2d2d44;
-      border-radius: 8px;
-      padding: 1rem 1.2rem;
-      font-family: 'Fira Code', monospace;
+    .rating-btn {
+      padding: 0.45rem 1.1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid;
+      transition: all 0.15s;
+    }
+
+    .rating-btn.again {
+      background: rgba(220,38,38,0.15);
+      border-color: var(--red-d);
+      color: var(--red);
+    }
+
+    .rating-btn.again:hover { background: rgba(220,38,38,0.28); }
+
+    .rating-btn.hard {
+      background: rgba(251,146,60,0.12);
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .rating-btn.hard:hover { background: rgba(251,146,60,0.22); }
+
+    .rating-btn.good {
+      background: rgba(96,165,250,0.12);
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    .rating-btn.good:hover { background: rgba(96,165,250,0.22); }
+
+    .rating-btn.easy {
+      background: rgba(52,211,153,0.12);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .rating-btn.easy:hover { background: rgba(52,211,153,0.22); }
+
+    /* Dots */
+    .dot-row {
+      display: flex;
+      gap: 7px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.2rem;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--border);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .dot.seen  { background: var(--purple-d); }
+    .dot.easy  { background: var(--green); }
+    .dot.hard  { background: var(--orange); }
+    .dot.again { background: var(--red); }
+    .dot.current { transform: scale(1.45); outline: 2px solid var(--blue); outline-offset: 2px; }
+
+    /* SRS stats */
+    .srs-stats {
+      display: flex;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+      margin-top: 1.4rem;
+      justify-content: center;
+    }
+
+    .srs-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .srs-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       QUIZ
+    ───────────────────────────────────────────────────────────── */
+    .quiz-toolbar {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem 0.9rem;
       font-size: 0.82rem;
-      overflow-x: auto;
-      white-space: pre;
-      line-height: 1.9;
-      color: #94a3b8;
-    }
-    .csv-box span.front { color: #e2e8f0; }
-    .csv-box span.sep { color: #a78bfa; }
-    .csv-box span.back { color: #6ee7b7; }
-
-    /* Quiz */
-    .sentences { list-style: none; counter-reset: item; }
-    .sentences li {
-      counter-increment: item;
-      display: flex;
-      gap: 1rem;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid #2d2d44;
-      font-size: 0.92rem;
-    }
-    .sentences li:last-child { border-bottom: none; }
-    .sentences li::before {
-      content: counter(item) ".";
-      color: #6366f1;
       font-weight: 700;
-      min-width: 1.8rem;
-      font-size: 0.85rem;
-      padding-top: 0.05rem;
     }
-    .blank { display: inline-block; min-width: 170px; border-bottom: 2px solid #6366f1; color: transparent; user-select: none; }
-    .verb { color: #f472b6; font-style: italic; font-size: 0.85em; }
 
-    /* Translations */
-    .trans-list { list-style: none; }
-    .trans-list li {
-      padding: 0.9rem 0;
-      border-bottom: 1px solid #2d2d44;
-      display: flex;
-      gap: 1rem;
-      align-items: flex-start;
-    }
-    .trans-list li:last-child { border-bottom: none; }
-    .badge {
-      background: #312e81;
-      color: #a5b4fc;
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 0.2em 0.6em;
-      border-radius: 20px;
-      white-space: nowrap;
-      margin-top: 0.2rem;
+    .stat-pill.score-pill { color: var(--yellow); }
+    .stat-pill.time-pill  { color: var(--blue); font-family: 'Fira Code', monospace; }
+
+    .timer-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
       flex-shrink: 0;
     }
 
-    /* Lösungen */
-    .solution-table th { color: #6ee7b7; }
-    .solution-table td:nth-child(2) { color: #6ee7b7; font-weight: 600; font-family: 'Fira Code', monospace; }
-    .solution-table td:nth-child(3) { color: #94a3b8; font-size: 0.85rem; }
+    .timer-dot.running { animation: blink 1.2s infinite; }
 
-    .translation-sol {
-      display: grid;
-      gap: 0.9rem;
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.25; }
     }
-    .tsol {
-      background: #252538;
-      border-radius: 8px;
-      padding: 0.9rem 1.1rem;
-    }
-    .tsol .tense-tag { font-size: 0.75rem; font-weight: 700; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
-    .tsol .german { color: #94a3b8; font-size: 0.88rem; margin-bottom: 0.3rem; }
-    .tsol .english { color: #6ee7b7; font-weight: 600; margin-bottom: 0.3rem; }
-    .tsol .why { color: #64748b; font-size: 0.82rem; font-style: italic; }
 
-    .vault-hint {
+    /* Results banner */
+    .result-banner {
+      display: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      margin-bottom: 2rem;
       text-align: center;
-      color: #f59e0b;
+    }
+
+    .result-banner.show { display: block; }
+
+    .result-pct {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .result-sub {
+      color: var(--muted);
+      margin: 0.4rem 0 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    .grade-wrap { background: var(--surface2); border-radius: 999px; height: 10px; margin: 0.6rem auto; max-width: 320px; overflow: hidden; }
+    .grade-bar  { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--red), var(--yellow) 50%, var(--green)); transition: width 0.7s ease; }
+
+    .result-msg {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 0.6rem;
+    }
+
+    /* Quiz items */
+    .quiz-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .quiz-item.is-correct {
+      border-color: rgba(52,211,153,0.5);
+      background: rgba(52,211,153,0.04);
+    }
+
+    .quiz-item.is-wrong {
+      border-color: rgba(248,113,113,0.5);
+      background: rgba(248,113,113,0.04);
+    }
+
+    .qi-num {
+      font-size: 0.68rem;
       font-weight: 700;
-      font-size: 0.85rem;
-      margin-bottom: 1.2rem;
-      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--purple);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    footer {
-      text-align: center;
-      color: #475569;
+    .qi-tense {
+      background: rgba(167,139,250,0.1);
+      border: 1px solid rgba(167,139,250,0.2);
+      border-radius: 4px;
+      padding: 0.1em 0.45em;
+      font-size: 0.68rem;
+      color: var(--purple);
+    }
+
+    .qi-sentence {
+      font-size: 0.92rem;
+      line-height: 1.9;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.25rem;
+    }
+
+    .qi-sentence .verb-hint {
+      color: var(--pink);
+      font-style: italic;
+      font-size: 0.8em;
+      opacity: 0.85;
+    }
+
+    .quiz-input {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 0.88rem;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: 0.25rem 0.55rem;
+      min-width: 175px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, color 0.2s;
+    }
+
+    .quiz-input::placeholder { color: var(--muted2); font-size: 0.78em; }
+
+    .quiz-input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(167,139,250,0.18);
+    }
+
+    .is-correct .quiz-input {
+      border-color: rgba(52,211,153,0.6);
+      color: var(--green);
+      background: rgba(52,211,153,0.06);
+    }
+
+    .is-wrong .quiz-input {
+      border-color: rgba(248,113,113,0.6);
+      color: var(--red);
+      background: rgba(248,113,113,0.06);
+    }
+
+    .qi-feedback {
+      display: none;
+      margin-top: 0.75rem;
+      padding-top: 0.65rem;
+      border-top: 1px solid var(--border);
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+
+    .is-correct .qi-feedback,
+    .is-wrong   .qi-feedback { display: flex; }
+
+    .fb-icon { font-size: 0.95rem; flex-shrink: 0; line-height: 1.6; }
+
+    .fb-body { font-size: 0.82rem; }
+
+    .fb-correct {
+      font-family: 'Fira Code', monospace;
+      font-weight: 700;
+      color: var(--green);
+      font-size: 0.88rem;
+    }
+
+    .fb-why { color: var(--muted); margin-top: 0.2rem; }
+
+    /* ─────────────────────────────────────────────────────────────
+       TRANSLATION
+    ───────────────────────────────────────────────────────────── */
+    .trans-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.5rem;
+      margin-bottom: 1.2rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .trans-item.is-correct {
+      border-color: rgba(52,211,153,0.45);
+      background: rgba(52,211,153,0.03);
+    }
+
+    .trans-item.is-wrong {
+      border-color: rgba(248,113,113,0.45);
+      background: rgba(248,113,113,0.03);
+    }
+
+    .trans-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 0.2em 0.7em;
+      border-radius: 999px;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.3);
+      color: var(--purple);
+      margin-bottom: 0.75rem;
+    }
+
+    .trans-german {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .trans-input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.92rem;
+      padding: 0.65rem 0.9rem;
+      resize: vertical;
+      min-height: 56px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .trans-input::placeholder { color: var(--muted2); }
+
+    .trans-input:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(167,139,250,0.16);
+    }
+
+    .is-correct .trans-input { border-color: rgba(52,211,153,0.55); }
+    .is-wrong   .trans-input { border-color: rgba(248,113,113,0.55); }
+
+    .trans-feedback {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.9rem 1rem;
+      background: var(--surface2);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      font-size: 0.84rem;
+    }
+
+    .is-correct .trans-feedback,
+    .is-wrong   .trans-feedback { display: block; }
+
+    .tf-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.35rem;
+    }
+
+    .is-correct .tf-label { color: var(--green); }
+    .is-wrong   .tf-label { color: var(--red); }
+
+    .tf-solution {
+      font-family: 'Fira Code', monospace;
+      color: var(--green);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .tf-why {
+      color: var(--muted);
       font-size: 0.8rem;
-      margin-top: 3rem;
+      margin-top: 0.35rem;
+      font-style: italic;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       CSV EXPORT
+    ───────────────────────────────────────────────────────────── */
+    .csv-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .csv-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.3rem;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+
+    .csv-header p { color: var(--muted); font-size: 0.82rem; }
+
+    .csv-body {
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 0.79rem;
+      line-height: 2.1;
+      padding: 1.2rem 1.4rem;
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 450px;
+      white-space: pre;
+      color: var(--muted);
+    }
+
+    .csv-body .cf { color: var(--text); }
+    .csv-body .cs { color: var(--purple); }
+    .csv-body .cb { color: var(--green); }
+    .csv-body .cn { color: var(--muted2); user-select: none; }
+
+    /* ─────────────────────────────────────────────────────────────
+       KEYBOARD SHORTCUTS HELP
+    ───────────────────────────────────────────────────────────── */
+    .kbd-hint {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 0.4rem;
+      margin-bottom: 2rem;
+    }
+
+    .kbd-item {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    kbd {
+      display: inline-block;
+      background: var(--surface3);
+      border: 1px solid var(--border2);
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      padding: 0.1em 0.45em;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.75em;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       TOAST
+    ───────────────────────────────────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(130%);
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 1.5rem;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--green);
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 2000;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .toast.visible { transform: translateX(-50%) translateY(0); }
+
+    /* ─────────────────────────────────────────────────────────────
+       ANIMATIONS
+    ───────────────────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .fade-up { animation: fadeUp 0.28s ease forwards; }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%      { transform: translateX(-7px); }
+      40%      { transform: translateX(7px); }
+      60%      { transform: translateX(-5px); }
+      80%      { transform: translateX(4px); }
+    }
+
+    .shake { animation: shake 0.32s ease; }
+
+    @keyframes popIn {
+      0%   { transform: scale(1); }
+      45%  { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    .pop { animation: popIn 0.22s ease; }
+
+    /* ─────────────────────────────────────────────────────────────
+       DIVIDER
+    ───────────────────────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 2rem 0;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .tab-panel { padding: 1.2rem 0.75rem 5rem; }
+      .fc-question { font-size: 1rem; }
+      .fc-answer   { font-size: 0.95rem; }
+      .quiz-input  { min-width: 140px; }
+      .cheat-table { font-size: 0.8rem; }
+      .card-toolbar { gap: 0.45rem; }
     }
   </style>
 </head>
 <body>
-<div class="container">
 
+<!-- ─── TOAST ──────────────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<!-- ─── HEADER ─────────────────────────────────────────────────── -->
+<header class="site-header">
   <h1>Englisch Trainingscamp</h1>
-  <p class="subtitle">Vergangenheitsformen · Last-Minute Edition</p>
+  <p class="subtitle">Vergangenheitsformen · Last-Minute Edition · Klasse 9–11</p>
+  <div class="header-badges">
+    <div class="hbadge">5 Zeitformen</div>
+    <div class="hbadge">15 Karteikarten</div>
+    <div class="hbadge">20 Quizfragen</div>
+    <div class="hbadge">5 Übersetzungen</div>
+    <div class="hbadge score">
+      Gesamtpunkte: <strong id="global-score">0</strong>&nbsp;/ 25
+    </div>
+  </div>
+</header>
 
-  <!-- TEIL 1 -->
-  <section>
-    <h2>Teil 1 · Spickzettel</h2>
-    <table>
+<!-- ─── NAVIGATION ─────────────────────────────────────────────── -->
+<nav class="tab-bar" id="tab-bar">
+  <button class="tab-btn active" data-tab="cheat">📋 Spickzettel</button>
+  <button class="tab-btn" data-tab="cards">🃏 Karteikarten</button>
+  <button class="tab-btn" data-tab="quiz">✏️ Lückentext</button>
+  <button class="tab-btn" data-tab="trans">🌍 Übersetzung</button>
+  <button class="tab-btn" data-tab="export">📤 CSV Export</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANEL 1 — SPICKZETTEL
+══════════════════════════════════════════════════════════════ -->
+<div class="tab-panel active" id="tab-cheat">
+
+  <div class="sec-label">Teil 1</div>
+  <h2 class="sec-title">Der ultimative Spickzettel</h2>
+  <p class="sec-desc">Alle 5 Zeitformen auf einen Blick. Formel + Signalwörter + Beispiel lern auswendig!</p>
+
+  <div class="table-wrap">
+    <table class="cheat-table">
       <thead>
         <tr>
-          <th>Zeitform</th>
-          <th>Bildung</th>
+          <th style="width:170px">Zeitform</th>
+          <th style="width:190px">Bildung</th>
           <th>Signalwörter</th>
-          <th>Beispiel</th>
+          <th>Beispielsatz</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><strong>Simple Past</strong></td>
-          <td><code>V2</code> / <code>verb+ed</code></td>
-          <td>yesterday, ago, last night, in 1990, then, when</td>
-          <td>She <em>called</em> him yesterday.</td>
+          <td><span class="tense-name">Simple Past</span></td>
+          <td><span class="formula">V2 / verb + ed</span></td>
+          <td><span class="signals">yesterday · ago · last night / week / year · in 1990 · then · when</span></td>
+          <td class="example">She <em>called</em> him yesterday.</td>
         </tr>
         <tr>
-          <td><strong>Past Continuous</strong></td>
-          <td><code>was/were + verb+ing</code></td>
-          <td>while, when, at that moment, at 6 o'clock</td>
-          <td>He <em>was sleeping</em> when she called.</td>
+          <td><span class="tense-name">Past Continuous</span></td>
+          <td><span class="formula">was / were + verb+ing</span></td>
+          <td><span class="signals">while · when · at that moment · at 6 o'clock (yesterday)</span></td>
+          <td class="example">He <em>was sleeping</em> when she called.</td>
         </tr>
         <tr>
-          <td><strong>Past Perfect Simple (Active)</strong></td>
-          <td><code>had + V3</code></td>
-          <td>already, before, after, by the time, never … before</td>
-          <td>They <em>had left</em> before I arrived.</td>
+          <td><span class="tense-name">Past Perfect Simple<br>(Active)</span></td>
+          <td><span class="formula">had + V3</span></td>
+          <td><span class="signals">already · just · yet · before · after · by the time · never … before</span></td>
+          <td class="example">They <em>had left</em> before I arrived.</td>
         </tr>
         <tr>
-          <td><strong>Past Perfect Simple (Passive)</strong></td>
-          <td><code>had + been + V3</code></td>
-          <td>before, already (Fokus auf Objekt, nicht Täter)</td>
-          <td>The letter <em>had been sent</em> before noon.</td>
+          <td><span class="tense-name">Past Perfect Simple<br>(Passive)</span></td>
+          <td><span class="formula">had + been + V3</span></td>
+          <td><span class="signals">before · already · by the time<br><em style="color:var(--muted);font-size:0.82em">(Fokus: Objekt, nicht Täter)</em></span></td>
+          <td class="example">The letter <em>had been sent</em> before noon.</td>
         </tr>
         <tr>
-          <td><strong>Past Perfect Continuous</strong></td>
-          <td><code>had + been + verb+ing</code></td>
-          <td>for, since, how long, all day/week</td>
-          <td>She <em>had been waiting</em> for an hour when the bus arrived.</td>
+          <td><span class="tense-name">Past Perfect<br>Continuous</span></td>
+          <td><span class="formula">had + been + verb+ing</span></td>
+          <td><span class="signals">for · since · how long · all day / week<br><em style="color:var(--muted);font-size:0.82em">(Betonung der Dauer!)</em></span></td>
+          <td class="example">She <em>had been waiting</em> for an hour when the bus arrived.</td>
         </tr>
       </tbody>
     </table>
+  </div>
 
-    <div class="rules">
-      <div class="rule">Parallele/unterbrochene Handlung → <strong>Past Continuous</strong> (lang) + <strong>Simple Past</strong> (kurz)</div>
-      <div class="rule">Handlung A vor Handlung B in der Vergangenheit → <strong>Past Perfect</strong></div>
-      <div class="rule">Täter unwichtig / Objekt im Fokus → <strong>+ Passive</strong> (had been + V3)</div>
-      <div class="rule">Dauer BIS zu einem Punkt in der Vergangenheit → <strong>Past Perfect Continuous</strong> (for / since!)</div>
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-icon">⚡</div>
+      <h4>Unterbrechung / parallel</h4>
+      <p><strong>Past Continuous</strong> (lange Handlung) + <strong>Simple Past</strong> (kurze Unterbrechung). Schlüssel: <em>while / when</em></p>
     </div>
-  </section>
-
-  <!-- TEIL 2 -->
-  <section>
-    <h2>Teil 2 · Karteikarten (CSV für Quizlet / Anki)</h2>
-    <p style="color:#94a3b8;font-size:0.85rem;margin-bottom:1rem;">Quizlet → Importieren → Trennzeichen: <code>;</code></p>
-    <div class="csv-box"><span class="front">Wie bildet man das Simple Past bei regelmäßigen Verben?</span><span class="sep"> ; </span><span class="back">Infinitiv + -ed  (z. B. walk → walked)</span>
-<span class="front">Wie bildet man das Simple Past bei unregelmäßigen Verben?</span><span class="sep"> ; </span><span class="back">2. Spalte der unregelmäßigen Verben (V2)  (z. B. go → went)</span>
-<span class="front">Wie bildet man das Past Continuous?</span><span class="sep"> ; </span><span class="back">was / were + Verb + -ing</span>
-<span class="front">Welche Signalwörter zeigen IMMER Past Continuous an?</span><span class="sep"> ; </span><span class="back">while  und  at that moment</span>
-<span class="front">Ich spielte gestern Fußball.</span><span class="sep"> ; </span><span class="back">I played football yesterday.</span>
-<span class="front">Wie bildet man das Past Perfect Simple (Active)?</span><span class="sep"> ; </span><span class="back">had + past participle (V3)  (z. B. had eaten)</span>
-<span class="front">Er war schon gegangen, als ich ankam.</span><span class="sep"> ; </span><span class="back">He had already left when I arrived.</span>
-<span class="front">Unterschied Past Perfect Simple vs. Past Perfect Continuous?</span><span class="sep"> ; </span><span class="back">Simple = vollendete Handlung / Continuous = Betonung der Dauer</span>
-<span class="front">Wie bildet man das Past Perfect Simple (Passive)?</span><span class="sep"> ; </span><span class="back">had + been + past participle (V3)</span>
-<span class="front">Das Fenster war gebrochen worden, bevor wir ankamen.</span><span class="sep"> ; </span><span class="back">The window had been broken before we arrived.</span>
-<span class="front">Wie bildet man das Past Perfect Continuous?</span><span class="sep"> ; </span><span class="back">had + been + Verb + -ing  (z. B. had been working)</span>
-<span class="front">Sie hatte drei Stunden lang gewartet, als der Zug endlich kam.</span><span class="sep"> ; </span><span class="back">She had been waiting for three hours when the train finally arrived.</span>
-<span class="front">Signalwort für Past Perfect Continuous (Dauer)?</span><span class="sep"> ; </span><span class="back">for  oder  since  (+ Simple-Past-Ereignis)</span>
-<span class="front">Das Buch war bereits veröffentlicht worden. (Passive!)</span><span class="sep"> ; </span><span class="back">The book had already been published.</span>
-<span class="front">Ich las gerade ein Buch, als das Telefon klingelte.</span><span class="sep"> ; </span><span class="back">I was reading a book when the phone rang.</span></div>
-  </section>
-
-  <!-- TEIL 3 -->
-  <section>
-    <h2>Teil 3 · Lückentext Quiz — Hardcore</h2>
-    <p style="color:#94a3b8;font-size:0.85rem;margin-bottom:1.2rem;">Setze das Verb in der richtigen Zeitform ein. Lösungen → Teil 5.</p>
-    <ol class="sentences">
-      <li>When I arrived at the station, the train <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(leave)</span> already.</li>
-      <li>She <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(study)</span> for two hours before she finally understood the concept.</li>
-      <li>The cake <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(eat)</span> by the time we got home. There was nothing left!</li>
-      <li>While Tom <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(repair)</span> the car, it started to rain heavily.</li>
-      <li>I <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(never / see)</span> such a beautiful sunset before that evening.</li>
-      <li>By 8 p.m., all the guests <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(invite)</span> and the party <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(start)</span>.</li>
-      <li>The children <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(play)</span> in the garden when the storm suddenly broke out.</li>
-      <li>The report <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(finish)</span> by the team before the deadline last Monday.</li>
-      <li>She was exhausted because she <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(run)</span> for over an hour.</li>
-      <li>He <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(read)</span> the newspaper when his boss walked in.</li>
-      <li>After the scientists <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(discover)</span> the new planet, they celebrated for weeks.</li>
-      <li>The old bridge <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(destroy)</span> before the new one was built.</li>
-      <li>I realised that I <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(forget)</span> my wallet at home.</li>
-      <li>They <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(argue)</span> for thirty minutes before they finally calmed down.</li>
-      <li>The documents <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(sign)</span> by the director before the meeting started.</li>
-      <li>Last summer, we <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(visit)</span> Paris for the first time.</li>
-      <li>When she opened the fridge, she noticed that all the milk <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(drink)</span>.</li>
-      <li>The mechanic <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(work)</span> on the engine for four hours when the owner arrived.</li>
-      <li>He <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(not / finish)</span> his homework yet when his mother called him for dinner.</li>
-      <li>While the teacher <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(explain)</span> the grammar rule, two students fell asleep.</li>
-    </ol>
-  </section>
-
-  <!-- TEIL 4 -->
-  <section>
-    <h2>Teil 4 · Übersetzungs-Challenge</h2>
-    <p style="color:#94a3b8;font-size:0.85rem;margin-bottom:1.2rem;">Übersetze vollständig ins Englische. Lösungen → Teil 5.</p>
-    <ul class="trans-list">
-      <li><span class="badge">Simple Past</span> Gestern Abend sah ich einen interessanten Film und ging danach früh ins Bett.</li>
-      <li><span class="badge">Past Continuous</span> Als das Erdbeben begann, schlief die ganze Familie noch tief und fest.</li>
-      <li><span class="badge">PP Simple Active</span> Als wir im Restaurant ankamen, hatten die anderen bereits mit dem Essen angefangen.</li>
-      <li><span class="badge">PP Simple Passive</span> Das neue Rathaus war bereits fertiggestellt worden, bevor der Bürgermeister sein Amt antrat.</li>
-      <li><span class="badge">PP Continuous</span> Er hatte seit seinem zwölften Lebensjahr Gitarre gespielt, als er seinen ersten Auftritt hatte.</li>
-    </ul>
-  </section>
-
-  <!-- TEIL 5 -->
-  <section>
-    <h2>Teil 5 · Lösungs-Tresor</h2>
-    <p class="vault-hint">⚠ ERST SELBST VERSUCHEN — DANN HIER SCHAUEN ⚠</p>
-
-    <h2 style="font-size:0.9rem;margin-bottom:0.8rem;">Lückentext (Teil 3)</h2>
-    <table class="solution-table">
-      <thead>
-        <tr><th>Nr.</th><th>Lösung</th><th>Begründung</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>1</td><td>had left</td><td>Zug weg VOR meiner Ankunft — Vorvergangenheit</td></tr>
-        <tr><td>2</td><td>had been studying</td><td>Dauer (2h) BIS zum Verstehen — PP Continuous</td></tr>
-        <tr><td>3</td><td>had been eaten</td><td>Vorvergangenheit + Passiv: Täter unwichtig</td></tr>
-        <tr><td>4</td><td>was repairing</td><td>Laufende Handlung, durch Regen unterbrochen</td></tr>
-        <tr><td>5</td><td>had never seen</td><td>Erfahrung bis zu jenem Abend — Vorvergangenheit</td></tr>
-        <tr><td>6</td><td>had been invited / had started</td><td>Beide Handlungen VOR 20 Uhr abgeschlossen</td></tr>
-        <tr><td>7</td><td>were playing</td><td>Laufende Handlung, durch Sturm unterbrochen</td></tr>
-        <tr><td>8</td><td>had been finished</td><td>Vorvergangenheit + Passiv: fertig VOR Deadline</td></tr>
-        <tr><td>9</td><td>had been running</td><td>Dauer = Ursache für Erschöpfung — PP Continuous</td></tr>
-        <tr><td>10</td><td>was reading</td><td>Laufende Handlung beim Eintreten des Chefs</td></tr>
-        <tr><td>11</td><td>had discovered</td><td>Entdeckung VOR der Feier — Vorvergangenheit</td></tr>
-        <tr><td>12</td><td>had been destroyed</td><td>Abriss VOR Neubau + Passiv</td></tr>
-        <tr><td>13</td><td>had forgotten</td><td>Vergessen vor dem Realisieren — Vorvergangenheit</td></tr>
-        <tr><td>14</td><td>had been arguing</td><td>Streit dauerte 30 Min. BIS zur Beruhigung</td></tr>
-        <tr><td>15</td><td>had been signed</td><td>Unterschrift VOR Meeting + Passiv</td></tr>
-        <tr><td>16</td><td>visited</td><td>Abgeschlossene Handlung — "last summer"</td></tr>
-        <tr><td>17</td><td>had been drunk</td><td>Milch weg VOR dem Öffnen + Passiv</td></tr>
-        <tr><td>18</td><td>had been working</td><td>4h Dauer BIS zur Ankunft — PP Continuous</td></tr>
-        <tr><td>19</td><td>had not finished</td><td>Hausaufgaben noch offen VOR dem Rufen</td></tr>
-        <tr><td>20</td><td>was explaining</td><td>Laufende Handlung — Schüler schliefen WÄHREND</td></tr>
-      </tbody>
-    </table>
-
-    <h2 style="font-size:0.9rem;margin:1.5rem 0 0.8rem;">Übersetzungen (Teil 4)</h2>
-    <div class="translation-sol">
-      <div class="tsol">
-        <div class="tense-tag">Simple Past</div>
-        <div class="german">Gestern Abend sah ich einen interessanten Film und ging danach früh ins Bett.</div>
-        <div class="english">Yesterday evening, I watched an interesting film and went to bed early afterwards.</div>
-        <div class="why">Abgeschlossene Handlungen gestern Abend — einfache Vergangenheit</div>
-      </div>
-      <div class="tsol">
-        <div class="tense-tag">Past Continuous</div>
-        <div class="german">Als das Erdbeben begann, schlief die ganze Familie noch tief und fest.</div>
-        <div class="english">When the earthquake began, the whole family was still fast asleep.</div>
-        <div class="why">Andauernder Zustand beim Eintreten des Erdbebens</div>
-      </div>
-      <div class="tsol">
-        <div class="tense-tag">Past Perfect Simple Active</div>
-        <div class="german">Als wir im Restaurant ankamen, hatten die anderen bereits mit dem Essen angefangen.</div>
-        <div class="english">When we arrived at the restaurant, the others had already started eating.</div>
-        <div class="why">Essen begann VOR unserer Ankunft — Vorvergangenheit aktiv</div>
-      </div>
-      <div class="tsol">
-        <div class="tense-tag">Past Perfect Simple Passive</div>
-        <div class="german">Das neue Rathaus war bereits fertiggestellt worden, bevor der Bürgermeister sein Amt antrat.</div>
-        <div class="english">The new town hall had already been completed before the mayor took office.</div>
-        <div class="why">Fertigstellung VOR Amtsantritt, Täter unwichtig — Vorvergangenheit Passiv</div>
-      </div>
-      <div class="tsol">
-        <div class="tense-tag">Past Perfect Continuous</div>
-        <div class="german">Er hatte seit seinem zwölften Lebensjahr Gitarre gespielt, als er seinen ersten Auftritt hatte.</div>
-        <div class="english">He had been playing the guitar since he was twelve when he had his first performance.</div>
-        <div class="why">Dauer seit 12 Jahren BIS zum ersten Auftritt — PP Continuous</div>
-      </div>
+    <div class="rule-card">
+      <div class="rule-icon">⏮</div>
+      <h4>Vorvergangenheit</h4>
+      <p>Handlung A passiert VOR Handlung B in der Vergangenheit → <strong>Past Perfect Simple (Active)</strong></p>
     </div>
-  </section>
+    <div class="rule-card">
+      <div class="rule-icon">🔒</div>
+      <h4>Täter unwichtig</h4>
+      <p>Objekt im Fokus, kein Täter genannt → <strong>Past Perfect Passive</strong>: had + been + V3</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon">⏱</div>
+      <h4>Dauer bis zur Vergangenheit</h4>
+      <p>Wie lange lief etwas BIS zu einem Punkt? → <strong>Past Perfect Continuous</strong>. Schlüssel: <em>for / since</em></p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon">🎯</div>
+      <h4>Stolperfalle: PP Simple vs. Continuous</h4>
+      <p>Beide nutzen <strong>had</strong> — Continuous betont die DAUER, Simple betont das ERGEBNIS / den Abschluss</p>
+    </div>
+    <div class="rule-card">
+      <div class="rule-icon">🧩</div>
+      <h4>Passiv erkennen</h4>
+      <p>Kein Täter / Objekt als Subjekt / "worden" im Deutschen → Passiv wählen: <em>had been + V3</em></p>
+    </div>
+  </div>
 
-  <footer>Viel Erfolg morgen! Du schaffst das.</footer>
+  <div class="divider"></div>
+
+  <div class="sec-label" style="margin-bottom:0.8rem">Schnell-Referenz — Bildungsformeln</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.7rem">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.9rem 1rem;font-size:0.84rem">
+      <div style="color:var(--muted2);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.35rem">Simple Past (reg.)</div>
+      <code style="font-size:0.95em">walk → walked</code><br>
+      <code style="font-size:0.95em">play → played</code><br>
+      <code style="font-size:0.95em">stop → stopped</code>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.9rem 1rem;font-size:0.84rem">
+      <div style="color:var(--muted2);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.35rem">Past Continuous</div>
+      <code style="font-size:0.95em">was running</code><br>
+      <code style="font-size:0.95em">were studying</code><br>
+      <code style="font-size:0.95em">was sleeping</code>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.9rem 1rem;font-size:0.84rem">
+      <div style="color:var(--muted2);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.35rem">Past Perfect Simple</div>
+      <code style="font-size:0.95em">had eaten</code><br>
+      <code style="font-size:0.95em">had been eaten</code><br>
+      <code style="font-size:0.95em">had not finished</code>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.9rem 1rem;font-size:0.84rem">
+      <div style="color:var(--muted2);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.35rem">Past Perfect Continuous</div>
+      <code style="font-size:0.95em">had been working</code><br>
+      <code style="font-size:0.95em">had been waiting</code><br>
+      <code style="font-size:0.95em">had been running</code>
+    </div>
+  </div>
 </div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANEL 2 — KARTEIKARTEN
+══════════════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-cards">
+
+  <div class="sec-label">Teil 2</div>
+  <h2 class="sec-title">Interaktive Karteikarten</h2>
+  <p class="sec-desc">Klick auf die Karte zum Umdrehen. Bewertet deine Antwort — so lernst du gezielt die schwachen Karten.</p>
+
+  <div class="kbd-hint">
+    <div class="kbd-item"><kbd>←</kbd><kbd>→</kbd> Navigieren</div>
+    <div class="kbd-item"><kbd>Space</kbd> Umdrehen</div>
+    <div class="kbd-item"><kbd>1</kbd> Nochmal · <kbd>2</kbd> Schwer · <kbd>3</kbd> Gut · <kbd>4</kbd> Leicht</div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-fill" id="card-progress" style="width:6%"></div>
+  </div>
+
+  <div class="card-toolbar">
+    <button class="btn" id="btn-prev">← Zurück</button>
+    <button class="btn btn-primary" id="btn-flip">🔄 Umdrehen</button>
+    <button class="btn" id="btn-next">Weiter →</button>
+    <button class="btn" id="btn-shuffle">🔀 Mischen</button>
+    <button class="btn" id="btn-reset-cards">↺ Reset</button>
+    <div class="spacer"></div>
+    <span class="card-counter-text"><span id="card-cur">1</span> / <span id="card-tot">15</span></span>
+  </div>
+
+  <div class="fc-arena">
+    <div class="flashcard" id="flashcard">
+      <div class="fc-face fc-front">
+        <span class="fc-tag">Frage / Übersetzung</span>
+        <div class="fc-question" id="fc-q">Wird geladen…</div>
+        <div class="fc-hint">Klick zum Umdrehen · Space</div>
+      </div>
+      <div class="fc-face fc-back">
+        <span class="fc-tag">Antwort</span>
+        <div class="fc-answer" id="fc-a">Wird geladen…</div>
+        <div class="fc-hint">Klick zum Zurückdrehen</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rating-row" id="rating-row">
+    <button class="rating-btn again" data-rating="again">🔴 Nochmal</button>
+    <button class="rating-btn hard"  data-rating="hard">🟠 Schwer</button>
+    <button class="rating-btn good"  data-rating="good">🔵 Gut</button>
+    <button class="rating-btn easy"  data-rating="easy">🟢 Leicht</button>
+  </div>
+
+  <div class="dot-row" id="card-dots"></div>
+
+  <div class="srs-stats" id="srs-stats">
+    <div class="srs-stat"><div class="srs-dot" style="background:var(--border)"></div> <span id="srs-unseen">15</span> offen</div>
+    <div class="srs-stat"><div class="srs-dot" style="background:var(--green)"></div>  <span id="srs-easy">0</span> leicht</div>
+    <div class="srs-stat"><div class="srs-dot" style="background:var(--blue)"></div>   <span id="srs-good">0</span> gut</div>
+    <div class="srs-stat"><div class="srs-dot" style="background:var(--orange)"></div> <span id="srs-hard">0</span> schwer</div>
+    <div class="srs-stat"><div class="srs-dot" style="background:var(--red)"></div>    <span id="srs-again">0</span> nochmal</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANEL 3 — QUIZ
+══════════════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-quiz">
+
+  <div class="sec-label">Teil 3</div>
+  <h2 class="sec-title">Lückentext-Quiz — Hardcore Modus</h2>
+  <p class="sec-desc">Trag das Verb in der richtigen Zeitform ein. Drücke <kbd>Enter</kbd> um weiterzuspringen.</p>
+
+  <div class="quiz-toolbar">
+    <div class="stat-pill score-pill">Punkte: <span id="quiz-pts">0</span> / 20</div>
+    <div class="stat-pill time-pill">
+      <div class="timer-dot running" id="tdot"></div>
+      <span id="quiz-clock">00:00</span>
+    </div>
+    <button class="btn btn-primary"  id="btn-check-quiz">✓ Auswerten</button>
+    <button class="btn"              id="btn-reveal-quiz">👁 Alle zeigen</button>
+    <button class="btn btn-danger"   id="btn-reset-quiz">↺ Neu</button>
+  </div>
+
+  <div class="result-banner" id="quiz-banner">
+    <div class="result-pct" id="quiz-pct">0%</div>
+    <p class="result-sub" id="quiz-sub">0 von 20 richtig</p>
+    <div class="grade-wrap"><div class="grade-bar" id="quiz-gbar" style="width:0%"></div></div>
+    <p class="result-msg" id="quiz-msg"></p>
+  </div>
+
+  <div id="quiz-list"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANEL 4 — ÜBERSETZUNG
+══════════════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-trans">
+
+  <div class="sec-label">Teil 4</div>
+  <h2 class="sec-title">Übersetzungs-Challenge</h2>
+  <p class="sec-desc">Übersetze jeden Satz vollständig ins Englische. Jede der 5 Zeitformen kommt genau einmal vor.</p>
+
+  <div class="quiz-toolbar">
+    <div class="stat-pill score-pill">Punkte: <span id="trans-pts">0</span> / 5</div>
+    <button class="btn btn-primary" id="btn-check-trans">✓ Auswerten</button>
+    <button class="btn" id="btn-reveal-trans">👁 Alle zeigen</button>
+    <button class="btn btn-danger" id="btn-reset-trans">↺ Neu</button>
+  </div>
+
+  <div class="result-banner" id="trans-banner">
+    <div class="result-pct" id="trans-pct">0%</div>
+    <p class="result-sub" id="trans-sub">0 von 5 richtig</p>
+    <div class="grade-wrap"><div class="grade-bar" id="trans-gbar" style="width:0%"></div></div>
+    <p class="result-msg" id="trans-msg"></p>
+  </div>
+
+  <div id="trans-list"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     PANEL 5 — CSV EXPORT
+══════════════════════════════════════════════════════════════ -->
+<div class="tab-panel" id="tab-export">
+
+  <div class="sec-label">Teil 5</div>
+  <h2 class="sec-title">CSV Export — Quizlet / Anki</h2>
+  <p class="sec-desc">Kopiere den Text und importiere ihn in Quizlet (Trennzeichen: <code>;</code>) oder Anki (Feld-Trennzeichen: Semikolon).</p>
+
+  <div style="display:flex;gap:0.8rem;flex-wrap:wrap;margin-bottom:1.5rem">
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.8rem 1.1rem;font-size:0.82rem">
+      <div style="color:var(--muted2);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.3rem">Quizlet Import</div>
+      <div style="color:var(--text)">Einstellungen → Trennzeichen: <code>;</code></div>
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.8rem 1.1rem;font-size:0.82rem">
+      <div style="color:var(--muted2);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.3rem">Anki Import</div>
+      <div style="color:var(--text)">Datei → Importieren → Feldtrenner: <code>;</code></div>
+    </div>
+  </div>
+
+  <div class="csv-card">
+    <div class="csv-header">
+      <p>15 Karteikarten · Vorderseite <span style="color:var(--purple)"> ; </span> Rückseite</p>
+      <button class="btn btn-primary" id="btn-copy-csv">📋 Alles kopieren</button>
+    </div>
+    <div class="csv-body" id="csv-body"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════════════ -->
+<script>
+"use strict";
+
+/* ──────────────────────────────────────────────────────────────
+   DATA: FLASHCARDS
+────────────────────────────────────────────────────────────── */
+const CARDS = [
+  {
+    q: "Wie bildet man das Simple Past bei regelmäßigen Verben?",
+    a: "Infinitiv + -ed  (z. B. walk → walked)"
+  },
+  {
+    q: "Wie bildet man das Simple Past bei unregelmäßigen Verben?",
+    a: "2. Spalte der unregelmäßigen Verben (V2)  (z. B. go → went)"
+  },
+  {
+    q: "Wie bildet man das Past Continuous?",
+    a: "was / were + Verb + -ing  (z. B. was running)"
+  },
+  {
+    q: "Welche zwei Signalwörter zeigen IMMER Past Continuous an?",
+    a: "while  und  at that moment"
+  },
+  {
+    q: "Übersetze: Ich spielte gestern Fußball.",
+    a: "I played football yesterday."
+  },
+  {
+    q: "Wie bildet man das Past Perfect Simple (Active)?",
+    a: "had + past participle (V3)  (z. B. had eaten)"
+  },
+  {
+    q: "Übersetze: Er war schon gegangen, als ich ankam.",
+    a: "He had already left when I arrived."
+  },
+  {
+    q: "Was ist der Unterschied zwischen Past Perfect Simple und Past Perfect Continuous?",
+    a: "Simple = vollendete Handlung / Continuous = Betonung der DAUER bis zu einem Punkt"
+  },
+  {
+    q: "Wie bildet man das Past Perfect Simple (Passive)?",
+    a: "had + been + past participle (V3)  (z. B. had been built)"
+  },
+  {
+    q: "Übersetze: Das Fenster war gebrochen worden, bevor wir ankamen.",
+    a: "The window had been broken before we arrived."
+  },
+  {
+    q: "Wie bildet man das Past Perfect Continuous?",
+    a: "had + been + Verb + -ing  (z. B. had been working)"
+  },
+  {
+    q: "Übersetze: Sie hatte drei Stunden lang gewartet, als der Zug kam.",
+    a: "She had been waiting for three hours when the train finally arrived."
+  },
+  {
+    q: "Welche Signalwörter zeigen Past Perfect Continuous (Dauer) an?",
+    a: "for  oder  since  (in Kombination mit einem Simple-Past-Ereignis)"
+  },
+  {
+    q: "Übersetze: Das Buch war bereits veröffentlicht worden. (Passiv!)",
+    a: "The book had already been published."
+  },
+  {
+    q: "Übersetze: Ich las gerade ein Buch, als das Telefon klingelte.",
+    a: "I was reading a book when the phone rang."
+  }
+];
+
+/* ──────────────────────────────────────────────────────────────
+   DATA: QUIZ
+────────────────────────────────────────────────────────────── */
+const QUIZ = [
+  {
+    parts:   ["When I arrived at the station, the train ", "B0", " already."],
+    verb:    "leave",
+    tense:   "Past Perfect Simple",
+    answers: [["had left"]],
+    why:     "Zug weg VOR meiner Ankunft — Vorvergangenheit aktiv"
+  },
+  {
+    parts:   ["She ", "B0", " for two hours before she finally understood the concept."],
+    verb:    "study",
+    tense:   "Past Perfect Continuous",
+    answers: [["had been studying"]],
+    why:     "Dauer (2 h) BIS zum Verstehen — PP Continuous"
+  },
+  {
+    parts:   ["The cake ", "B0", " by the time we got home. There was nothing left!"],
+    verb:    "eat",
+    tense:   "Past Perfect Passive",
+    answers: [["had been eaten"]],
+    why:     "Vorvergangenheit + Passiv: Täter unwichtig"
+  },
+  {
+    parts:   ["While Tom ", "B0", " the car, it started to rain heavily."],
+    verb:    "repair",
+    tense:   "Past Continuous",
+    answers: [["was repairing"]],
+    why:     "Laufende Handlung, durch Regen unterbrochen"
+  },
+  {
+    parts:   ["I ", "B0", " such a beautiful sunset before that evening."],
+    verb:    "never / see",
+    tense:   "Past Perfect Simple",
+    answers: [["had never seen"]],
+    why:     "Erfahrung bis zu jenem Abend — PP Simple"
+  },
+  {
+    parts:   ["By 8 p.m., all the guests ", "B0", " and the party ", "B1", "."],
+    verb:    "invite / start",
+    tense:   "PP Passive + PP Simple",
+    answers: [["had been invited"], ["had started"]],
+    why:     "Beide Handlungen VOR 20 Uhr abgeschlossen"
+  },
+  {
+    parts:   ["The children ", "B0", " in the garden when the storm suddenly broke out."],
+    verb:    "play",
+    tense:   "Past Continuous",
+    answers: [["were playing"]],
+    why:     "Laufende Handlung, durch Sturm unterbrochen"
+  },
+  {
+    parts:   ["The report ", "B0", " by the team before the deadline last Monday."],
+    verb:    "finish",
+    tense:   "Past Perfect Passive",
+    answers: [["had been finished"]],
+    why:     "Vorvergangenheit + Passiv: fertig VOR Deadline"
+  },
+  {
+    parts:   ["She was exhausted because she ", "B0", " for over an hour."],
+    verb:    "run",
+    tense:   "Past Perfect Continuous",
+    answers: [["had been running"]],
+    why:     "Dauer = Ursache für Erschöpfung — PP Continuous"
+  },
+  {
+    parts:   ["He ", "B0", " the newspaper when his boss walked in."],
+    verb:    "read",
+    tense:   "Past Continuous",
+    answers: [["was reading"]],
+    why:     "Laufende Handlung beim Eintreten des Chefs"
+  },
+  {
+    parts:   ["After the scientists ", "B0", " the new planet, they celebrated for weeks."],
+    verb:    "discover",
+    tense:   "Past Perfect Simple",
+    answers: [["had discovered"]],
+    why:     "Entdeckung VOR der Feier — PP Simple"
+  },
+  {
+    parts:   ["The old bridge ", "B0", " before the new one was built."],
+    verb:    "destroy",
+    tense:   "Past Perfect Passive",
+    answers: [["had been destroyed"]],
+    why:     "Abriss VOR Neubau + Passiv"
+  },
+  {
+    parts:   ["I realised that I ", "B0", " my wallet at home."],
+    verb:    "forget",
+    tense:   "Past Perfect Simple",
+    answers: [["had forgotten"]],
+    why:     "Vergessen VOR dem Realisieren — PP Simple"
+  },
+  {
+    parts:   ["They ", "B0", " for thirty minutes before they finally calmed down."],
+    verb:    "argue",
+    tense:   "Past Perfect Continuous",
+    answers: [["had been arguing"]],
+    why:     "Streit dauerte 30 Min. BIS zur Beruhigung"
+  },
+  {
+    parts:   ["The documents ", "B0", " by the director before the meeting started."],
+    verb:    "sign",
+    tense:   "Past Perfect Passive",
+    answers: [["had been signed"]],
+    why:     "Unterschrift VOR Meeting + Passiv"
+  },
+  {
+    parts:   ["Last summer, we ", "B0", " Paris for the first time."],
+    verb:    "visit",
+    tense:   "Simple Past",
+    answers: [["visited"]],
+    why:     "Einfache abgeschlossene Handlung — 'last summer'"
+  },
+  {
+    parts:   ["When she opened the fridge, she noticed that all the milk ", "B0", "."],
+    verb:    "drink",
+    tense:   "Past Perfect Passive",
+    answers: [["had been drunk"]],
+    why:     "Milch weg VOR dem Öffnen + Passiv"
+  },
+  {
+    parts:   ["The mechanic ", "B0", " on the engine for four hours when the owner arrived."],
+    verb:    "work",
+    tense:   "Past Perfect Continuous",
+    answers: [["had been working"]],
+    why:     "4 h Dauer BIS zur Ankunft — PP Continuous"
+  },
+  {
+    parts:   ["He ", "B0", " his homework yet when his mother called him for dinner."],
+    verb:    "not / finish",
+    tense:   "Past Perfect Simple",
+    answers: [["had not finished", "hadn't finished"]],
+    why:     "Hausaufgaben noch offen VOR dem Rufen (verneint)"
+  },
+  {
+    parts:   ["While the teacher ", "B0", " the grammar rule, two students fell asleep."],
+    verb:    "explain",
+    tense:   "Past Continuous",
+    answers: [["was explaining"]],
+    why:     "Laufende Handlung — Schüler schliefen WÄHREND"
+  }
+];
+
+/* ──────────────────────────────────────────────────────────────
+   DATA: TRANSLATION
+────────────────────────────────────────────────────────────── */
+const TRANS = [
+  {
+    tense:   "Simple Past",
+    badge:   "Simple Past",
+    german:  "Gestern Abend sah ich einen interessanten Film und ging danach früh ins Bett.",
+    sols: [
+      "yesterday evening, i watched an interesting film and went to bed early afterwards",
+      "yesterday evening i watched an interesting film and went to bed early afterwards",
+      "last night i watched an interesting film and went to bed early afterwards",
+      "last night, i watched an interesting film and went to bed early afterwards"
+    ],
+    display: "Yesterday evening, I watched an interesting film and went to bed early afterwards.",
+    why:     "Abgeschlossene Handlungen gestern Abend — einfache Vergangenheit"
+  },
+  {
+    tense:   "Past Continuous",
+    badge:   "Past Continuous",
+    german:  "Als das Erdbeben begann, schlief die ganze Familie noch tief und fest.",
+    sols: [
+      "when the earthquake began, the whole family was still fast asleep",
+      "when the earthquake started, the whole family was still fast asleep",
+      "when the earthquake began, the whole family was still sound asleep"
+    ],
+    display: "When the earthquake began, the whole family was still fast asleep.",
+    why:     "Andauernder Zustand beim Eintreten des Erdbebens — Past Continuous"
+  },
+  {
+    tense:   "Past Perfect Simple (Active)",
+    badge:   "PP Simple Active",
+    german:  "Als wir im Restaurant ankamen, hatten die anderen bereits mit dem Essen angefangen.",
+    sols: [
+      "when we arrived at the restaurant, the others had already started eating",
+      "when we arrived at the restaurant, the others had already started to eat",
+      "by the time we arrived at the restaurant, the others had already started eating"
+    ],
+    display: "When we arrived at the restaurant, the others had already started eating.",
+    why:     "Essen begann VOR unserer Ankunft — Vorvergangenheit aktiv"
+  },
+  {
+    tense:   "Past Perfect Simple (Passive)",
+    badge:   "PP Simple Passive",
+    german:  "Das neue Rathaus war bereits fertiggestellt worden, bevor der Bürgermeister sein Amt antrat.",
+    sols: [
+      "the new town hall had already been completed before the mayor took office",
+      "the new town hall had already been finished before the mayor took office",
+      "the new city hall had already been completed before the mayor took office"
+    ],
+    display: "The new town hall had already been completed before the mayor took office.",
+    why:     "Fertigstellung VOR Amtsantritt, Täter unwichtig — Vorvergangenheit Passiv"
+  },
+  {
+    tense:   "Past Perfect Continuous",
+    badge:   "PP Continuous",
+    german:  "Er hatte seit seinem zwölften Lebensjahr Gitarre gespielt, als er seinen ersten Auftritt hatte.",
+    sols: [
+      "he had been playing the guitar since he was twelve when he had his first performance",
+      "he had been playing guitar since he was twelve when he had his first performance",
+      "he had been playing the guitar since he was twelve years old when he had his first performance"
+    ],
+    display: "He had been playing the guitar since he was twelve when he had his first performance.",
+    why:     "Dauer seit 12 Jahren BIS zum ersten Auftritt — PP Continuous"
+  }
+];
+
+/* ──────────────────────────────────────────────────────────────
+   STATE
+────────────────────────────────────────────────────────────── */
+const state = {
+  // cards
+  order:      [...CARDS.keys()],
+  cardIdx:    0,
+  flipped:    false,
+  ratings:    new Array(CARDS.length).fill(null), // null | 'again'|'hard'|'good'|'easy'
+
+  // quiz
+  quizDone:   false,
+  quizScore:  0,
+
+  // trans
+  transDone:  false,
+  transScore: 0,
+
+  // timer
+  timerSec:   0,
+  timerInt:   null,
+  timerOn:    false
+};
+
+/* ──────────────────────────────────────────────────────────────
+   UTILS
+────────────────────────────────────────────────────────────── */
+function norm(s) {
+  return (s || '').trim().toLowerCase()
+    .replace(/['']/g, "'")
+    .replace(/\s+/g, ' ');
+}
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+function toast(msg, color) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.color = color || 'var(--green)';
+  el.classList.add('visible');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove('visible'), 2400);
+}
+
+function gradeMsg(pct) {
+  if (pct >= 95) return "Perfekt! Note: 1 — Du bist bereit!";
+  if (pct >= 85) return "Sehr gut! Note: 2 — Fast makellos.";
+  if (pct >= 70) return "Gut! Note: 3 — Noch die Stolperfallen üben.";
+  if (pct >= 55) return "Befriedigend! Note: 4 — Nochmal Regeln drüberlesen.";
+  if (pct >= 40) return "Ausreichend — mehr Übung nötig.";
+  return "Nicht bestanden — von vorne anfangen!";
+}
+
+function updateGlobal() {
+  const total = state.quizScore + state.transScore;
+  document.getElementById('global-score').textContent = total;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   TAB NAVIGATION
+────────────────────────────────────────────────────────────── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const panel = document.getElementById('tab-' + btn.dataset.tab);
+    panel.classList.add('active', 'fade-up');
+    setTimeout(() => panel.classList.remove('fade-up'), 350);
+
+    if (btn.dataset.tab === 'quiz' && !state.timerOn) startTimer();
+  });
+});
+
+/* ──────────────────────────────────────────────────────────────
+   TIMER
+────────────────────────────────────────────────────────────── */
+function startTimer() {
+  if (state.timerOn) return;
+  state.timerOn = true;
+  document.getElementById('tdot').classList.add('running');
+  state.timerInt = setInterval(() => {
+    state.timerSec++;
+    const m = Math.floor(state.timerSec / 60);
+    const s = state.timerSec % 60;
+    document.getElementById('quiz-clock').textContent = pad2(m) + ':' + pad2(s);
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(state.timerInt);
+  state.timerOn = false;
+  document.getElementById('tdot').classList.remove('running');
+  document.getElementById('tdot').style.background = 'var(--muted)';
+}
+
+function resetTimer() {
+  stopTimer();
+  state.timerSec = 0;
+  document.getElementById('quiz-clock').textContent = '00:00';
+  document.getElementById('tdot').style.background = 'var(--green)';
+}
+
+/* ──────────────────────────────────────────────────────────────
+   FLASHCARDS — RENDER
+────────────────────────────────────────────────────────────── */
+function renderCard(animate) {
+  const fc   = document.getElementById('flashcard');
+  const card = CARDS[state.order[state.cardIdx]];
+
+  // unflip
+  state.flipped = false;
+  fc.classList.remove('is-flipped');
+
+  if (animate) {
+    fc.style.opacity = '0';
+    fc.style.transform = 'scale(0.95)';
+    fc.style.transition = 'opacity 0.15s, transform 0.15s';
+    setTimeout(() => {
+      document.getElementById('fc-q').textContent = card.q;
+      document.getElementById('fc-a').textContent = card.a;
+      fc.style.opacity = '1';
+      fc.style.transform = '';
+      fc.style.transition = 'transform 0.52s cubic-bezier(0.4,0,0.2,1), opacity 0.15s';
+    }, 150);
+  } else {
+    document.getElementById('fc-q').textContent = card.q;
+    document.getElementById('fc-a').textContent = card.a;
+  }
+
+  // counter + progress
+  const cur = state.cardIdx + 1;
+  const tot = CARDS.length;
+  document.getElementById('card-cur').textContent = cur;
+  document.getElementById('card-tot').textContent = tot;
+  document.getElementById('card-progress').style.width = (cur / tot * 100) + '%';
+
+  updateDots();
+  updateSrsStats();
+}
+
+function flipCard() {
+  const fc = document.getElementById('flashcard');
+  state.flipped = !state.flipped;
+  fc.classList.toggle('is-flipped', state.flipped);
+}
+
+function goCard(delta) {
+  const newIdx = state.cardIdx + delta;
+  if (newIdx < 0 || newIdx >= CARDS.length) return;
+  state.cardIdx = newIdx;
+  renderCard(true);
+}
+
+function goToCard(idx) {
+  state.cardIdx = idx;
+  renderCard(true);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   FLASHCARDS — DOTS & STATS
+────────────────────────────────────────────────────────────── */
+function buildDots() {
+  const row = document.getElementById('card-dots');
+  row.innerHTML = '';
+  state.order.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.title = `Karte ${i + 1}`;
+    d.addEventListener('click', () => goToCard(i));
+    row.appendChild(d);
+  });
+}
+
+function updateDots() {
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((d, i) => {
+    const rating = state.ratings[state.order[i]];
+    d.className = 'dot'
+      + (rating ? ' ' + rating : '')
+      + (i === state.cardIdx ? ' current' : '');
+  });
+}
+
+function updateSrsStats() {
+  const counts = { again: 0, hard: 0, good: 0, easy: 0, unseen: 0 };
+  state.ratings.forEach(r => {
+    if (r === null) counts.unseen++;
+    else counts[r]++;
+  });
+  document.getElementById('srs-unseen').textContent = counts.unseen;
+  document.getElementById('srs-again').textContent  = counts.again;
+  document.getElementById('srs-hard').textContent   = counts.hard;
+  document.getElementById('srs-good').textContent   = counts.good;
+  document.getElementById('srs-easy').textContent   = counts.easy;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   FLASHCARDS — RATING
+────────────────────────────────────────────────────────────── */
+document.querySelectorAll('.rating-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const rating = btn.dataset.rating;
+    const realIdx = state.order[state.cardIdx];
+    state.ratings[realIdx] = rating;
+    updateDots();
+    updateSrsStats();
+
+    const msgs = {
+      again: "Karte kommt nochmal!",
+      hard:  "Schwer — weiter üben.",
+      good:  "Gut gemacht!",
+      easy:  "Super — weiter!"
+    };
+    toast(msgs[rating] || '');
+
+    if (state.cardIdx < CARDS.length - 1) {
+      setTimeout(() => goCard(1), 300);
+    } else {
+      const all = state.ratings.filter(r => r !== null).length;
+      toast(`Alle ${all} Karten bewertet!`, 'var(--yellow)');
+    }
+  });
+});
+
+/* ──────────────────────────────────────────────────────────────
+   FLASHCARDS — BUTTONS
+────────────────────────────────────────────────────────────── */
+document.getElementById('btn-prev').addEventListener('click', () => goCard(-1));
+document.getElementById('btn-next').addEventListener('click', () => goCard(1));
+
+document.getElementById('btn-flip').addEventListener('click', flipCard);
+document.getElementById('flashcard').addEventListener('click', flipCard);
+
+document.getElementById('btn-shuffle').addEventListener('click', () => {
+  // Fisher-Yates
+  for (let i = state.order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [state.order[i], state.order[j]] = [state.order[j], state.order[i]];
+  }
+  state.cardIdx = 0;
+  buildDots();
+  renderCard(true);
+  toast("Karten gemischt! 🔀");
+});
+
+document.getElementById('btn-reset-cards').addEventListener('click', () => {
+  state.order   = [...CARDS.keys()];
+  state.cardIdx = 0;
+  state.ratings = new Array(CARDS.length).fill(null);
+  buildDots();
+  renderCard(false);
+  toast("Reset — viel Erfolg!");
+});
+
+/* ──────────────────────────────────────────────────────────────
+   FLASHCARDS — KEYBOARD
+────────────────────────────────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  const inCards = document.getElementById('tab-cards').classList.contains('active');
+  if (!inCards) return;
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); goCard(-1); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); goCard(1); }
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+
+  const ratingMap = { '1': 'again', '2': 'hard', '3': 'good', '4': 'easy' };
+  if (ratingMap[e.key]) {
+    document.querySelector(`.rating-btn[data-rating="${ratingMap[e.key]}"]`)?.click();
+  }
+});
+
+/* ──────────────────────────────────────────────────────────────
+   QUIZ — BUILD
+────────────────────────────────────────────────────────────── */
+function buildQuiz() {
+  const list = document.getElementById('quiz-list');
+  list.innerHTML = '';
+
+  QUIZ.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-item';
+    div.id = 'qi-' + idx;
+
+    // header
+    const numEl = document.createElement('div');
+    numEl.className = 'qi-num';
+    numEl.innerHTML = `Satz ${idx + 1} <span class="qi-tense">${item.tense}</span>`;
+    div.appendChild(numEl);
+
+    // sentence
+    const sent = document.createElement('div');
+    sent.className = 'qi-sentence';
+
+    item.parts.forEach(part => {
+      if (part.startsWith('B')) {
+        const bIdx = parseInt(part.slice(1));
+        const verbParts = item.verb.split('/');
+        const vh = (verbParts[bIdx] || item.verb).trim();
+
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.className = 'quiz-input';
+        inp.placeholder = `(${vh})`;
+        inp.dataset.bidx = bIdx;
+        inp.setAttribute('autocomplete', 'off');
+        inp.setAttribute('autocorrect', 'off');
+        inp.setAttribute('spellcheck', 'false');
+        inp.setAttribute('autocapitalize', 'none');
+
+        inp.addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const allInputs = [...document.querySelectorAll('.quiz-input:not(:disabled)')];
+            const i = allInputs.indexOf(inp);
+            if (i < allInputs.length - 1) allInputs[i + 1].focus();
+            else document.getElementById('btn-check-quiz').click();
+          }
+        });
+
+        sent.appendChild(inp);
+      } else {
+        const sp = document.createElement('span');
+        sp.textContent = part;
+        sent.appendChild(sp);
+      }
+    });
+
+    // verb hint at end
+    const hint = document.createElement('span');
+    hint.className = 'verb-hint';
+    hint.textContent = `(${item.verb})`;
+    sent.appendChild(hint);
+
+    div.appendChild(sent);
+
+    // feedback
+    const fb = document.createElement('div');
+    fb.className = 'qi-feedback';
+    fb.id = 'qfb-' + idx;
+    div.appendChild(fb);
+
+    list.appendChild(div);
+  });
+}
+
+/* ──────────────────────────────────────────────────────────────
+   QUIZ — CHECK
+────────────────────────────────────────────────────────────── */
+function checkQuiz(reveal) {
+  let score = 0;
+
+  QUIZ.forEach((item, idx) => {
+    const div    = document.getElementById('qi-' + idx);
+    const inputs = div.querySelectorAll('.quiz-input');
+    const fb     = document.getElementById('qfb-' + idx);
+    let correct  = true;
+
+    inputs.forEach((inp, bi) => {
+      const accepted = item.answers[bi] || [];
+      const isRight  = accepted.some(a => norm(a) === norm(inp.value));
+
+      if (reveal) {
+        inp.value = accepted[0] || '';
+      } else {
+        if (!isRight) correct = false;
+      }
+      inp.disabled = true;
+    });
+
+    div.classList.remove('is-correct', 'is-wrong');
+
+    if (reveal) {
+      div.classList.add('is-correct');
+    } else {
+      div.classList.add(correct ? 'is-correct' : 'is-wrong');
+      if (correct) score++;
+    }
+
+    const icon  = correct ? '✓' : '✗';
+    const iclr  = correct ? 'var(--green)' : 'var(--red)';
+    const sols  = item.answers.map(g => g[0]).join(' / ');
+
+    fb.innerHTML = `
+      <div class="fb-icon" style="color:${iclr}">${icon}</div>
+      <div class="fb-body">
+        <div class="fb-correct">${sols}</div>
+        <div class="fb-why">${item.why}</div>
+      </div>`;
+  });
+
+  if (!reveal) {
+    state.quizScore = score;
+    state.quizDone  = true;
+    document.getElementById('quiz-pts').textContent = score;
+
+    const pct = Math.round(score / QUIZ.length * 100);
+    const banner = document.getElementById('quiz-banner');
+    banner.classList.add('show');
+    document.getElementById('quiz-pct').textContent  = pct + '%';
+    document.getElementById('quiz-sub').textContent  = `${score} von ${QUIZ.length} richtig`;
+    document.getElementById('quiz-gbar').style.width = pct + '%';
+    document.getElementById('quiz-msg').textContent  = gradeMsg(pct);
+    banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  stopTimer();
+  updateGlobal();
+}
+
+/* ──────────────────────────────────────────────────────────────
+   QUIZ — RESET
+────────────────────────────────────────────────────────────── */
+function resetQuiz() {
+  state.quizDone  = false;
+  state.quizScore = 0;
+  document.getElementById('quiz-pts').textContent = 0;
+  document.getElementById('quiz-banner').classList.remove('show');
+  updateGlobal();
+  buildQuiz();
+  resetTimer();
+}
+
+document.getElementById('btn-check-quiz').addEventListener('click', () => {
+  if (!state.quizDone) checkQuiz(false);
+  else toast("Bereits ausgewertet — ↺ Neu starten für einen neuen Versuch.", 'var(--yellow)');
+});
+
+document.getElementById('btn-reveal-quiz').addEventListener('click', () => {
+  checkQuiz(true);
+  toast("Alle Lösungen aufgedeckt! 👁", 'var(--blue)');
+});
+
+document.getElementById('btn-reset-quiz').addEventListener('click', resetQuiz);
+
+/* ──────────────────────────────────────────────────────────────
+   TRANSLATION — BUILD
+────────────────────────────────────────────────────────────── */
+function buildTrans() {
+  const list = document.getElementById('trans-list');
+  list.innerHTML = '';
+
+  TRANS.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'trans-item';
+    div.id = 'ti-' + idx;
+
+    div.innerHTML = `
+      <div class="trans-badge">${item.badge}</div>
+      <div class="trans-german">${item.german}</div>
+      <textarea
+        class="trans-input"
+        id="tinp-${idx}"
+        rows="2"
+        placeholder="Deine englische Übersetzung …"
+        spellcheck="false"
+        autocorrect="off"
+        autocapitalize="none"
+      ></textarea>
+      <div class="trans-feedback" id="tfb-${idx}">
+        <div class="tf-label" id="tflbl-${idx}">Musterlösung:</div>
+        <div class="tf-solution" id="tfsol-${idx}"></div>
+        <div class="tf-why" id="tfwhy-${idx}"></div>
+      </div>`;
+
+    list.appendChild(div);
+  });
+}
+
+/* ──────────────────────────────────────────────────────────────
+   TRANSLATION — CHECK
+   Fuzzy: >= 75% key tokens match
+────────────────────────────────────────────────────────────── */
+function matchTrans(userRaw, sols) {
+  const u = norm(userRaw);
+  return sols.some(sol => {
+    const s  = norm(sol);
+    if (u === s) return true;
+    const st = s.split(' ');
+    const ut = u.split(' ');
+    const hits = st.filter(w => w.length > 2 && ut.includes(w)).length;
+    return hits / st.length >= 0.75;
+  });
+}
+
+function checkTrans(reveal) {
+  let score = 0;
+
+  TRANS.forEach((item, idx) => {
+    const div  = document.getElementById('ti-' + idx);
+    const inp  = document.getElementById('tinp-' + idx);
+    const lbl  = document.getElementById('tflbl-' + idx);
+    const sol  = document.getElementById('tfsol-' + idx);
+    const why  = document.getElementById('tfwhy-' + idx);
+
+    const isRight = reveal ? false : matchTrans(inp.value, item.sols);
+
+    inp.disabled = true;
+    if (reveal) inp.value = item.display;
+
+    div.classList.remove('is-correct', 'is-wrong');
+    div.classList.add(reveal || isRight ? 'is-correct' : 'is-wrong');
+
+    if (isRight && !reveal) score++;
+
+    const ok = reveal || isRight;
+    lbl.textContent = ok ? "✓ Richtig! Musterlösung:" : "✗ Musterlösung:";
+    lbl.style.color = ok ? 'var(--green)' : 'var(--red)';
+    sol.textContent = item.display;
+    why.textContent = item.why;
+  });
+
+  if (!reveal) {
+    state.transScore = score;
+    state.transDone  = true;
+    document.getElementById('trans-pts').textContent = score;
+
+    const pct = Math.round(score / TRANS.length * 100);
+    const banner = document.getElementById('trans-banner');
+    banner.classList.add('show');
+    document.getElementById('trans-pct').textContent  = pct + '%';
+    document.getElementById('trans-sub').textContent  = `${score} von ${TRANS.length} richtig`;
+    document.getElementById('trans-gbar').style.width = pct + '%';
+    document.getElementById('trans-msg').textContent  = gradeMsg(pct);
+    banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  updateGlobal();
+}
+
+function resetTrans() {
+  state.transDone  = false;
+  state.transScore = 0;
+  document.getElementById('trans-pts').textContent = 0;
+  document.getElementById('trans-banner').classList.remove('show');
+  updateGlobal();
+  buildTrans();
+}
+
+document.getElementById('btn-check-trans').addEventListener('click', () => {
+  if (!state.transDone) checkTrans(false);
+  else toast("Bereits ausgewertet — ↺ Neu starten.", 'var(--yellow)');
+});
+
+document.getElementById('btn-reveal-trans').addEventListener('click', () => {
+  checkTrans(true);
+  toast("Alle Lösungen aufgedeckt! 👁", 'var(--blue)');
+});
+
+document.getElementById('btn-reset-trans').addEventListener('click', resetTrans);
+
+/* ──────────────────────────────────────────────────────────────
+   CSV
+────────────────────────────────────────────────────────────── */
+function buildCSV() {
+  const body = document.getElementById('csv-body');
+  body.innerHTML = '';
+
+  CARDS.forEach((card, i) => {
+    const row = document.createElement('div');
+    const n   = String(i + 1).padStart(2, ' ');
+    row.innerHTML =
+      `<span class="cn">${n}. </span>` +
+      `<span class="cf">${esc(card.q)}</span>` +
+      `<span class="cs">  ;  </span>` +
+      `<span class="cb">${esc(card.a)}</span>`;
+    body.appendChild(row);
+  });
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+document.getElementById('btn-copy-csv').addEventListener('click', () => {
+  const text = CARDS.map(c => `${c.q} ; ${c.a}`).join('\n');
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(() => toast("Kopiert! ✓"))
+      .catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+});
+
+function fallbackCopy(text) {
+  const ta = Object.assign(document.createElement('textarea'), {
+    value: text,
+    style: 'position:fixed;opacity:0'
+  });
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); toast("Kopiert! ✓"); }
+  catch { toast("Kopieren fehlgeschlagen — manuell markieren.", 'var(--red)'); }
+  document.body.removeChild(ta);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   INIT
+────────────────────────────────────────────────────────────── */
+(function init() {
+  buildDots();
+  renderCard(false);
+  buildQuiz();
+  buildTrans();
+  buildCSV();
+})();
+</script>
 </body>
 </html>
