@@ -1027,6 +1027,9 @@
     /* ─────────────────────────────────────────────────────────────
        ANIMATIONS
     ───────────────────────────────────────────────────────────── */
+    #quiz-set-btns .btn.active-set,
+    #quiz-set-btns .btn:focus { background:var(--purple-d); border-color:var(--purple-d); color:#fff; }
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(12px); }
       to   { opacity: 1; transform: none; }
@@ -1230,6 +1233,11 @@
   <h2 class="sec-title">Interaktive Karteikarten</h2>
   <p class="sec-desc">Klick auf die Karte zum Umdrehen. Bewertet deine Antwort — so lernst du gezielt die schwachen Karten.</p>
 
+  <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:1.4rem">
+    <button class="btn btn-primary" id="deck-grammar" onclick="switchDeck('grammar')">📚 Grammatik (15)</button>
+    <button class="btn" id="deck-signals" onclick="switchDeck('signals')">🔑 Signalwörter (18)</button>
+  </div>
+
   <div class="kbd-hint">
     <div class="kbd-item"><kbd>←</kbd><kbd>→</kbd> Navigieren</div>
     <div class="kbd-item"><kbd>Space</kbd> Umdrehen</div>
@@ -1290,7 +1298,15 @@
 
   <div class="sec-label">Teil 3</div>
   <h2 class="sec-title">Lückentext-Quiz — Hardcore Modus</h2>
-  <p class="sec-desc">Trag das Verb in der richtigen Zeitform ein. Drücke <kbd>Enter</kbd> um weiterzuspringen.</p>
+  <p class="sec-desc">5 verschiedene Quiz-Sets mit je 20 Fragen. Trag das Verb ein, drücke <kbd>Enter</kbd> zum Weiterspringen.</p>
+
+  <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.4rem" id="quiz-set-btns">
+    <button class="btn btn-primary" onclick="switchQuizSet(0)">Quiz 1</button>
+    <button class="btn" onclick="switchQuizSet(1)">Quiz 2</button>
+    <button class="btn" onclick="switchQuizSet(2)">Quiz 3</button>
+    <button class="btn" onclick="switchQuizSet(3)">Quiz 4</button>
+    <button class="btn" onclick="switchQuizSet(4)">Quiz 5</button>
+  </div>
 
   <div class="quiz-toolbar">
     <div class="stat-pill score-pill">Punkte: <span id="quiz-pts">0</span> / 20</div>
@@ -1443,6 +1459,704 @@ const CARDS = [
 /* ──────────────────────────────────────────────────────────────
    DATA: QUIZ
 ────────────────────────────────────────────────────────────── */
+/* ──────────────────────────────────────────────────────────────
+   DATA: SIGNAL WORD CARDS
+────────────────────────────────────────────────────────────── */
+const SIGNAL_CARDS = [
+  {
+    q: "Signalwort: yesterday / ago / last night / last year / in 1990",
+    a: "→ Simple Past\n(abgeschlossene Handlung zu einem bestimmten Zeitpunkt)"
+  },
+  {
+    q: "Signalwort: while / at that moment / at 6 o'clock yesterday",
+    a: "→ Past Continuous\n(Handlung war gerade im Gange zu diesem Zeitpunkt)"
+  },
+  {
+    q: "Signalwort: already / before / after / by the time / never … before",
+    a: "→ Past Perfect Simple (Active)\n(Handlung A war VOR Handlung B abgeschlossen)"
+  },
+  {
+    q: "Signalwort: for + Zeitspanne ODER since + Zeitpunkt (in der Vergangenheit)",
+    a: "→ Past Perfect Continuous\n(Handlung dauerte über eine Zeitspanne BIS zu einem Punkt an)"
+  },
+  {
+    q: "Kein Täter genannt / Objekt ist Subjekt / 'worden' im Deutschen",
+    a: "→ Past Perfect Passive: had + been + V3\n(z. B. The letter had been sent.)"
+  },
+  {
+    q: "Signalwort: just (in der Vergangenheit)",
+    a: "→ Past Perfect Simple\nhad just done = kurz zuvor gerade abgeschlossen\n(z. B. He had just fallen asleep when the phone rang.)"
+  },
+  {
+    q: "Signalwort: yet (verneint, in der Vergangenheit)",
+    a: "→ Past Perfect Simple (negiert)\nhadn't done yet = noch nicht abgeschlossen\n(z. B. She hadn't finished yet when he arrived.)"
+  },
+  {
+    q: "Signalwort: how long (Frage in der Vergangenheit)",
+    a: "→ Past Perfect Continuous\n(How long had she been waiting? — Dauer betont)"
+  },
+  {
+    q: "Signalwort: all day / all morning / all week (bis zu einem Punkt in der Vergangenheit)",
+    a: "→ Past Perfect Continuous\n(z. B. She had been studying all day when he called.)"
+  },
+  {
+    q: "Signalwort: when (kurze Handlung unterbricht lange Handlung)",
+    a: "→ Past Continuous (lange) + Simple Past (kurze Unterbrechung)\n(z. B. I was sleeping when the alarm went off.)"
+  },
+  {
+    q: "Signalwort: by the time + Simple Past",
+    a: "→ Past Perfect (Simple oder Continuous) in der anderen Satzhälfte\n(By the time she arrived, we had already eaten.)"
+  },
+  {
+    q: "Signalwort: never … before / for the first time",
+    a: "→ Past Perfect Simple\n(Erfahrung/Zustand bis zu diesem Punkt: I had never seen it before.)"
+  },
+  {
+    q: "Signalwort: after (Reihenfolge klarstellen)",
+    a: "→ Past Perfect Simple in der after-Klausel\n(After she had finished her work, she went out.)"
+  },
+  {
+    q: "Erschöpfung / Ergebnis als Ursache → weil jemand etwas LANGE getan hatte",
+    a: "→ Past Perfect Continuous\n(She was tired because she had been running for two hours.)"
+  },
+  {
+    q: "Wie erkenne ich Past Perfect Passive sicher?",
+    a: "Formel: had + been + V3\nTäter unwichtig ODER nicht genannt\nDeutsches 'worden': z. B. 'war gebaut worden' → had been built"
+  },
+  {
+    q: "Unterschied: 'for 3 hours' bei PP Simple vs. PP Continuous",
+    a: "PP Continuous → betont die andauernde Dauer (had been running for 3 hours)\nPP Simple → betont das abgeschlossene Ergebnis (had run 10 km)"
+  },
+  {
+    q: "Stolperfalle: 'when' kann ZWEI verschiedene Konstruktionen auslösen — welche?",
+    a: "1) when + SP → PC in der anderen Hälfte (Unterbrechung)\n   e.g. I was reading when she called.\n2) when + SP → PP in der anderen Hälfte (Vorvergangenheit)\n   e.g. When I arrived, he had already left."
+  },
+  {
+    q: "Signalwort: since he was 12 / since 2010 (in der Vergangenheit)",
+    a: "→ Past Perfect Continuous\n(He had been playing guitar since he was 12 when he gave his first concert.)"
+  }
+];
+
+/* ──────────────────────────────────────────────────────────────
+   DATA: QUIZ SETS (5 × 20 Fragen)
+────────────────────────────────────────────────────────────── */
+const QUIZ_SET_1 = [
+  {
+    parts:   ["When I arrived at the station, the train ", "B0", " already."],
+    verb:    "leave",         tense: "Past Perfect Simple",
+    answers: [["had left"]],
+    why:     "Zug weg VOR meiner Ankunft — Vorvergangenheit aktiv"
+  },
+  {
+    parts:   ["She ", "B0", " for two hours before she finally understood the concept."],
+    verb:    "study",         tense: "Past Perfect Continuous",
+    answers: [["had been studying"]],
+    why:     "Dauer (2 h) BIS zum Verstehen — PP Continuous"
+  },
+  {
+    parts:   ["The cake ", "B0", " by the time we got home. There was nothing left!"],
+    verb:    "eat",           tense: "Past Perfect Passive",
+    answers: [["had been eaten"]],
+    why:     "Vorvergangenheit + Passiv: Täter unwichtig"
+  },
+  {
+    parts:   ["While Tom ", "B0", " the car, it started to rain heavily."],
+    verb:    "repair",        tense: "Past Continuous",
+    answers: [["was repairing"]],
+    why:     "Laufende Handlung, durch Regen unterbrochen"
+  },
+  {
+    parts:   ["I ", "B0", " such a beautiful sunset before that evening."],
+    verb:    "never / see",   tense: "Past Perfect Simple",
+    answers: [["had never seen"]],
+    why:     "Erfahrung bis zu jenem Abend — PP Simple"
+  },
+  {
+    parts:   ["By 8 p.m., all the guests ", "B0", " and the party ", "B1", "."],
+    verb:    "invite / start", tense: "PP Passive + PP Simple",
+    answers: [["had been invited"], ["had started"]],
+    why:     "Beide Handlungen VOR 20 Uhr abgeschlossen"
+  },
+  {
+    parts:   ["The children ", "B0", " in the garden when the storm suddenly broke out."],
+    verb:    "play",          tense: "Past Continuous",
+    answers: [["were playing"]],
+    why:     "Laufende Handlung, durch Sturm unterbrochen"
+  },
+  {
+    parts:   ["The report ", "B0", " by the team before the deadline last Monday."],
+    verb:    "finish",        tense: "Past Perfect Passive",
+    answers: [["had been finished"]],
+    why:     "Vorvergangenheit + Passiv: fertig VOR Deadline"
+  },
+  {
+    parts:   ["She was exhausted because she ", "B0", " for over an hour."],
+    verb:    "run",           tense: "Past Perfect Continuous",
+    answers: [["had been running"]],
+    why:     "Dauer = Ursache für Erschöpfung — PP Continuous"
+  },
+  {
+    parts:   ["He ", "B0", " the newspaper when his boss walked in."],
+    verb:    "read",          tense: "Past Continuous",
+    answers: [["was reading"]],
+    why:     "Laufende Handlung beim Eintreten des Chefs"
+  },
+  {
+    parts:   ["After the scientists ", "B0", " the new planet, they celebrated for weeks."],
+    verb:    "discover",      tense: "Past Perfect Simple",
+    answers: [["had discovered"]],
+    why:     "Entdeckung VOR der Feier — PP Simple"
+  },
+  {
+    parts:   ["The old bridge ", "B0", " before the new one was built."],
+    verb:    "destroy",       tense: "Past Perfect Passive",
+    answers: [["had been destroyed"]],
+    why:     "Abriss VOR Neubau + Passiv"
+  },
+  {
+    parts:   ["I realised that I ", "B0", " my wallet at home."],
+    verb:    "forget",        tense: "Past Perfect Simple",
+    answers: [["had forgotten"]],
+    why:     "Vergessen VOR dem Realisieren — PP Simple"
+  },
+  {
+    parts:   ["They ", "B0", " for thirty minutes before they finally calmed down."],
+    verb:    "argue",         tense: "Past Perfect Continuous",
+    answers: [["had been arguing"]],
+    why:     "Streit dauerte 30 Min. BIS zur Beruhigung"
+  },
+  {
+    parts:   ["The documents ", "B0", " by the director before the meeting started."],
+    verb:    "sign",          tense: "Past Perfect Passive",
+    answers: [["had been signed"]],
+    why:     "Unterschrift VOR Meeting + Passiv"
+  },
+  {
+    parts:   ["Last summer, we ", "B0", " Paris for the first time."],
+    verb:    "visit",         tense: "Simple Past",
+    answers: [["visited"]],
+    why:     "Einfache abgeschlossene Handlung — 'last summer'"
+  },
+  {
+    parts:   ["When she opened the fridge, she noticed that all the milk ", "B0", "."],
+    verb:    "drink",         tense: "Past Perfect Passive",
+    answers: [["had been drunk"]],
+    why:     "Milch weg VOR dem Öffnen + Passiv"
+  },
+  {
+    parts:   ["The mechanic ", "B0", " on the engine for four hours when the owner arrived."],
+    verb:    "work",          tense: "Past Perfect Continuous",
+    answers: [["had been working"]],
+    why:     "4 h Dauer BIS zur Ankunft — PP Continuous"
+  },
+  {
+    parts:   ["He ", "B0", " his homework yet when his mother called him for dinner."],
+    verb:    "not / finish",  tense: "Past Perfect Simple",
+    answers: [["had not finished", "hadn't finished"]],
+    why:     "Hausaufgaben noch offen VOR dem Rufen (verneint)"
+  },
+  {
+    parts:   ["While the teacher ", "B0", " the grammar rule, two students fell asleep."],
+    verb:    "explain",       tense: "Past Continuous",
+    answers: [["was explaining"]],
+    why:     "Laufende Handlung — Schüler schliefen WÄHREND"
+  }
+];
+
+const QUIZ_SET_2 = [
+  {
+    parts:   ["When I ", "B0", " this morning, it was already 10 o'clock."],
+    verb:    "wake up",       tense: "Simple Past",
+    answers: [["woke up"]],
+    why:     "Abgeschlossene Handlung heute Morgen — Simple Past"
+  },
+  {
+    parts:   ["She ", "B0", " as a nurse for twenty years before she retired."],
+    verb:    "work",          tense: "Past Perfect Continuous",
+    answers: [["had been working"]],
+    why:     "20 Jahre Dauer BIS zur Rente — PP Continuous"
+  },
+  {
+    parts:   ["The letter ", "B0", " yet when the director arrived."],
+    verb:    "not / send",    tense: "Past Perfect Passive",
+    answers: [["had not been sent", "hadn't been sent"]],
+    why:     "Vorvergangenheit Passiv verneint — Brief noch nicht weg"
+  },
+  {
+    parts:   ["While they ", "B0", " to school, they listened to music."],
+    verb:    "drive",         tense: "Past Continuous",
+    answers: [["were driving"]],
+    why:     "Laufende Handlung (Fahrt), gleichzeitig Musik hören"
+  },
+  {
+    parts:   ["He realized that he ", "B0", " a terrible mistake."],
+    verb:    "make",          tense: "Past Perfect Simple",
+    answers: [["had made"]],
+    why:     "Fehler passierte VOR dem Erkennen — PP Simple"
+  },
+  {
+    parts:   ["The new law ", "B0", " by the government before the election took place."],
+    verb:    "introduce",     tense: "Past Perfect Passive",
+    answers: [["had been introduced"]],
+    why:     "Gesetz in Kraft VOR der Wahl + Passiv"
+  },
+  {
+    parts:   ["I ", "B0", " such a funny person before that day."],
+    verb:    "never / meet",  tense: "Past Perfect Simple",
+    answers: [["had never met"]],
+    why:     "Erfahrung bis zu jenem Tag — PP Simple + never"
+  },
+  {
+    parts:   ["Last Friday, we ", "B0", " to the cinema and ", "B1", " pizza afterwards."],
+    verb:    "go / eat",      tense: "Simple Past (×2)",
+    answers: [["went"], ["ate"]],
+    why:     "Zwei abgeschlossene Handlungen letzten Freitag"
+  },
+  {
+    parts:   ["She was upset because she ", "B0", " for him for two hours."],
+    verb:    "wait",          tense: "Past Perfect Continuous",
+    answers: [["had been waiting"]],
+    why:     "2 h Warten = Ursache für Verärgerung — PP Continuous"
+  },
+  {
+    parts:   ["The thief ", "B0", " before the police arrived at the scene."],
+    verb:    "catch",         tense: "Past Perfect Passive",
+    answers: [["had been caught"]],
+    why:     "Festnahme VOR Ankunft der Polizei + Passiv"
+  },
+  {
+    parts:   ["They ", "B0", " all night when the lights suddenly went out."],
+    verb:    "dance",         tense: "Past Continuous",
+    answers: [["were dancing"]],
+    why:     "Laufende Handlung, durch Stromausfall unterbrochen"
+  },
+  {
+    parts:   ["He ", "B0", " New York before that business trip."],
+    verb:    "never / visit", tense: "Past Perfect Simple",
+    answers: [["had never visited"]],
+    why:     "Keine New-York-Erfahrung bis zur Dienstreise"
+  },
+  {
+    parts:   ["The car ", "B0", " twice before it finally broke down completely."],
+    verb:    "repair",        tense: "Past Perfect Passive",
+    answers: [["had been repaired"]],
+    why:     "Zwei Reparaturen VOR dem endgültigen Defekt + Passiv"
+  },
+  {
+    parts:   ["We ", "B0", " on the phone for an hour when the battery died."],
+    verb:    "talk",          tense: "Past Perfect Continuous",
+    answers: [["had been talking"]],
+    why:     "1 h Dauer BIS zum leeren Akku — PP Continuous"
+  },
+  {
+    parts:   ["My sister ", "B0", " a new job last month."],
+    verb:    "find",          tense: "Simple Past",
+    answers: [["found"]],
+    why:     "Abgeschlossene Handlung letzten Monat — Simple Past"
+  },
+  {
+    parts:   ["The children ", "B0", " to bed when their parents came home."],
+    verb:    "already / go",  tense: "Past Perfect Simple",
+    answers: [["had already gone"]],
+    why:     "Kinder schon schlafen VOR Rückkehr der Eltern"
+  },
+  {
+    parts:   ["While the students ", "B0", " the test, the teacher walked around."],
+    verb:    "write",         tense: "Past Continuous",
+    answers: [["were writing"]],
+    why:     "Schüler schrieben gerade WÄHREND der Lehrer herumlief"
+  },
+  {
+    parts:   ["The museum ", "B0", " for renovation before we could visit it."],
+    verb:    "close",         tense: "Past Perfect Passive",
+    answers: [["had been closed"]],
+    why:     "Schließung VOR unserem Besuch + Passiv"
+  },
+  {
+    parts:   ["By the time the ambulance arrived, the patient ", "B0", " a lot of blood."],
+    verb:    "lose",          tense: "Past Perfect Simple",
+    answers: [["had lost"]],
+    why:     "Blutverlust geschah VOR Ankunft des Krankenwagens"
+  },
+  {
+    parts:   ["The dog ", "B0", " for hours before the neighbours finally called the police."],
+    verb:    "bark",          tense: "Past Perfect Continuous",
+    answers: [["had been barking"]],
+    why:     "Stundenlange Dauer BIS zum Anruf — PP Continuous"
+  }
+];
+
+const QUIZ_SET_3 = [
+  {
+    parts:   ["Yesterday, she ", "B0", " a new dress at the market."],
+    verb:    "buy",           tense: "Simple Past",
+    answers: [["bought"]],
+    why:     "Abgeschlossener Kauf gestern — Simple Past"
+  },
+  {
+    parts:   ["The package ", "B0", " already when I checked my phone."],
+    verb:    "deliver",       tense: "Past Perfect Passive",
+    answers: [["had already been delivered"]],
+    why:     "Lieferung VOR meinem Nachschauen + Passiv"
+  },
+  {
+    parts:   ["While my brother ", "B0", " dinner, I set the table."],
+    verb:    "cook",          tense: "Past Continuous",
+    answers: [["was cooking"]],
+    why:     "Bruder kochte gerade WÄHREND ich den Tisch deckte"
+  },
+  {
+    parts:   ["He ", "B0", " money for six months before he finally bought the laptop."],
+    verb:    "save",          tense: "Past Perfect Continuous",
+    answers: [["had been saving"]],
+    why:     "6 Monate sparen BIS zum Kauf — PP Continuous"
+  },
+  {
+    parts:   ["The concert ", "B0", " before the fans arrived at the venue."],
+    verb:    "cancel",        tense: "Past Perfect Passive",
+    answers: [["had been cancelled"]],
+    why:     "Absage VOR Ankunft der Fans + Passiv"
+  },
+  {
+    parts:   ["I ", "B0", " for ten hours when my alarm went off."],
+    verb:    "sleep",         tense: "Past Perfect Continuous",
+    answers: [["had been sleeping"]],
+    why:     "10 h schlafen BIS zum Wecker — PP Continuous"
+  },
+  {
+    parts:   ["She ", "B0", " the film twice before she took her friends."],
+    verb:    "already / see", tense: "Past Perfect Simple",
+    answers: [["had already seen"]],
+    why:     "Zweimal gesehen VOR dem nächsten Kinobesuch"
+  },
+  {
+    parts:   ["Last summer, they ", "B0", " across Europe by train."],
+    verb:    "travel",        tense: "Simple Past",
+    answers: [["travelled", "traveled"]],
+    why:     "Abgeschlossene Reise letzten Sommer — Simple Past"
+  },
+  {
+    parts:   ["The suspect ", "B0", " by the police before they released him."],
+    verb:    "question",      tense: "Past Perfect Passive",
+    answers: [["had been questioned"]],
+    why:     "Verhör VOR Freilassung + Passiv"
+  },
+  {
+    parts:   ["While it ", "B0", " outside, we sat by the fireplace and read books."],
+    verb:    "snow",          tense: "Past Continuous",
+    answers: [["was snowing"]],
+    why:     "Andauernder Schneefall WÄHREND wir lasen"
+  },
+  {
+    parts:   ["They ", "B0", " the song for weeks before the performance."],
+    verb:    "practise",      tense: "Past Perfect Continuous",
+    answers: [["had been practising", "had been practicing"]],
+    why:     "Wochen üben BIS zur Aufführung — PP Continuous"
+  },
+  {
+    parts:   ["She ", "B0", " anything before she fainted at school."],
+    verb:    "not / eat",     tense: "Past Perfect Simple",
+    answers: [["had not eaten", "hadn't eaten"]],
+    why:     "Kein Essen VOR der Ohnmacht — PP Simple verneint"
+  },
+  {
+    parts:   ["The old house ", "B0", " already when we decided to make an offer."],
+    verb:    "sell",          tense: "Past Perfect Passive",
+    answers: [["had already been sold"]],
+    why:     "Haus schon verkauft VOR unserem Entschluss + Passiv"
+  },
+  {
+    parts:   ["In 2019, my family ", "B0", " to a bigger apartment."],
+    verb:    "move",          tense: "Simple Past",
+    answers: [["moved"]],
+    why:     "Abgeschlossener Umzug 2019 — Simple Past"
+  },
+  {
+    parts:   ["He ", "B0", " about the problem for hours when the solution appeared to him."],
+    verb:    "think",         tense: "Past Perfect Continuous",
+    answers: [["had been thinking"]],
+    why:     "Stundenlang denken BIS zur Lösung — PP Continuous"
+  },
+  {
+    parts:   ["The train ", "B0", " already by the time we reached the platform."],
+    verb:    "leave",         tense: "Past Perfect Simple",
+    answers: [["had already left"]],
+    why:     "Zug schon weg VOR unserer Ankunft am Bahnsteig"
+  },
+  {
+    parts:   ["While she ", "B0", " her clothes, she noticed a stain on her shirt."],
+    verb:    "iron",          tense: "Past Continuous",
+    answers: [["was ironing"]],
+    why:     "Bügeln lief gerade WÄHREND sie den Fleck bemerkte"
+  },
+  {
+    parts:   ["All the tickets ", "B0", " before the official sale started."],
+    verb:    "sell",          tense: "Past Perfect Passive",
+    answers: [["had been sold"]],
+    why:     "Tickets weg VOR offiziellem Verkaufsstart + Passiv"
+  },
+  {
+    parts:   ["We ", "B0", " such beautiful music before that evening."],
+    verb:    "never / hear",  tense: "Past Perfect Simple",
+    answers: [["had never heard"]],
+    why:     "Keine Erfahrung mit dieser Musik bis zu jenem Abend"
+  },
+  {
+    parts:   ["The students ", "B0", " for five hours when the professor ended the lesson."],
+    verb:    "study",         tense: "Past Perfect Continuous",
+    answers: [["had been studying"]],
+    why:     "5 h lernen BIS zum Ende der Stunde — PP Continuous"
+  }
+];
+
+const QUIZ_SET_4 = [
+  {
+    parts:   ["She ", "B0", " in Paris for three years when she decided to move back."],
+    verb:    "live",          tense: "Past Perfect Continuous",
+    answers: [["had been living"]],
+    why:     "3 Jahre Dauer BIS zur Entscheidung — PP Continuous"
+  },
+  {
+    parts:   ["The email ", "B0", " to the wrong address before anyone noticed the mistake."],
+    verb:    "send",          tense: "Past Perfect Passive",
+    answers: [["had been sent"]],
+    why:     "Falscher Versand VOR der Entdeckung + Passiv"
+  },
+  {
+    parts:   ["He ", "B0", " just asleep when the phone rang."],
+    verb:    "fall",          tense: "Past Perfect Simple",
+    answers: [["had just fallen"]],
+    why:     "'just' → kurz vorher eingeschlafen — PP Simple"
+  },
+  {
+    parts:   ["While my parents ", "B0", " downstairs, I tried to sleep."],
+    verb:    "argue",         tense: "Past Continuous",
+    answers: [["were arguing"]],
+    why:     "Eltern stritten gerade WÄHREND ich versuchte zu schlafen"
+  },
+  {
+    parts:   ["The children ", "B0", " their vegetables yet when dessert was served."],
+    verb:    "not / eat",     tense: "Past Perfect Simple",
+    answers: [["had not eaten", "hadn't eaten"]],
+    why:     "Gemüse noch nicht gegessen VOR dem Dessert — 'yet'"
+  },
+  {
+    parts:   ["The bridge ", "B0", " by the storm before the engineers could inspect it."],
+    verb:    "damage",        tense: "Past Perfect Passive",
+    answers: [["had been damaged"]],
+    why:     "Sturm-Schaden VOR der Inspektion + Passiv"
+  },
+  {
+    parts:   ["I ", "B0", " on this project for months before I finally gave up."],
+    verb:    "work",          tense: "Past Perfect Continuous",
+    answers: [["had been working"]],
+    why:     "Monate Arbeit BIS zum Aufgeben — PP Continuous"
+  },
+  {
+    parts:   ["Last Tuesday, she ", "B0", " me at midnight. I was very surprised."],
+    verb:    "call",          tense: "Simple Past",
+    answers: [["called"]],
+    why:     "Anruf letzten Dienstag — abgeschlossen, Simple Past"
+  },
+  {
+    parts:   ["The results ", "B0", " before most students had arrived."],
+    verb:    "announce",      tense: "Past Perfect Passive",
+    answers: [["had been announced"]],
+    why:     "Ergebnisse bekannt VOR Ankunft der meisten Schüler + Passiv"
+  },
+  {
+    parts:   ["By the time the rescue team found him, he ", "B0", " alone in the forest for two weeks."],
+    verb:    "survive",       tense: "Past Perfect Continuous",
+    answers: [["had been surviving"]],
+    why:     "2 Wochen überleben BIS zur Rettung — PP Continuous"
+  },
+  {
+    parts:   ["While the audience ", "B0", " for the show to begin, someone fainted."],
+    verb:    "wait",          tense: "Past Continuous",
+    answers: [["was waiting"]],
+    why:     "Publikum wartete gerade WÄHREND jemand ohnmächtig wurde"
+  },
+  {
+    parts:   ["He was disappointed because he ", "B0", " so hard for the competition."],
+    verb:    "train",         tense: "Past Perfect Continuous",
+    answers: [["had been training"]],
+    why:     "Hartes Training = Ursache für Enttäuschung — PP Continuous"
+  },
+  {
+    parts:   ["The stolen painting ", "B0", " by the police before the museum reopened."],
+    verb:    "recover",       tense: "Past Perfect Passive",
+    answers: [["had been recovered"]],
+    why:     "Bild gefunden VOR Wiedereröffnung + Passiv"
+  },
+  {
+    parts:   ["She ", "B0", " abroad before her first business trip."],
+    verb:    "never / travel", tense: "Past Perfect Simple",
+    answers: [["had never travelled", "had never traveled"]],
+    why:     "Keine Auslandserfahrung bis zur Dienstreise — 'never'"
+  },
+  {
+    parts:   ["They ", "B0", " the problem for over an hour when they finally agreed."],
+    verb:    "discuss",       tense: "Past Perfect Continuous",
+    answers: [["had been discussing"]],
+    why:     "Über 1 h diskutieren BIS zur Einigung — PP Continuous"
+  },
+  {
+    parts:   ["In 1969, humans ", "B0", " on the moon for the first time."],
+    verb:    "land",          tense: "Simple Past",
+    answers: [["landed"]],
+    why:     "Historisches Ereignis 1969 — Simple Past"
+  },
+  {
+    parts:   ["The suspect ", "B0", " before the detective could interview him."],
+    verb:    "arrest",        tense: "Past Perfect Passive",
+    answers: [["had been arrested"]],
+    why:     "Verhaftung VOR dem Interview + Passiv"
+  },
+  {
+    parts:   ["While the journalist ", "B0", " the minister, the cameras were rolling."],
+    verb:    "interview",     tense: "Past Continuous",
+    answers: [["was interviewing"]],
+    why:     "Interview lief gerade WÄHREND Kameras filmten"
+  },
+  {
+    parts:   ["By the age of 30, she ", "B0", " three novels."],
+    verb:    "already / write", tense: "Past Perfect Simple",
+    answers: [["had already written"]],
+    why:     "Drei Romane VOR dem 30. Geburtstag fertig"
+  },
+  {
+    parts:   ["He ", "B0", " medicine for six years when he finally graduated."],
+    verb:    "study",         tense: "Past Perfect Continuous",
+    answers: [["had been studying"]],
+    why:     "6 Jahre studieren BIS zum Abschluss — PP Continuous"
+  }
+];
+
+const QUIZ_SET_5 = [
+  {
+    parts:   ["The documents ", "B0", " before the investigators arrived."],
+    verb:    "shred",         tense: "Past Perfect Passive",
+    answers: [["had been shredded"]],
+    why:     "Vernichtung VOR Ankunft der Ermittler + Passiv"
+  },
+  {
+    parts:   ["She ", "B0", " for hours when her friend finally called."],
+    verb:    "cry",           tense: "Past Perfect Continuous",
+    answers: [["had been crying"]],
+    why:     "Stundenlang weinen BIS zum Anruf — PP Continuous"
+  },
+  {
+    parts:   ["While the surgeon ", "B0", ", the power went out."],
+    verb:    "operate",       tense: "Past Continuous",
+    answers: [["was operating"]],
+    why:     "OP lief gerade WÄHREND der Strom ausfiel"
+  },
+  {
+    parts:   ["The old church ", "B0", " already when the tourists visited the town."],
+    verb:    "restore",       tense: "Past Perfect Passive",
+    answers: [["had already been restored"]],
+    why:     "Restaurierung VOR Touristenbesuch + Passiv"
+  },
+  {
+    parts:   ["He ", "B0", " well for weeks before the doctor prescribed medication."],
+    verb:    "not / sleep",   tense: "Past Perfect Continuous",
+    answers: [["had not been sleeping", "hadn't been sleeping"]],
+    why:     "Wochen schlechter Schlaf BIS zur Verschreibung (verneint)"
+  },
+  {
+    parts:   ["Last year, I ", "B0", " my holidays in Italy."],
+    verb:    "spend",         tense: "Simple Past",
+    answers: [["spent"]],
+    why:     "Urlaub letztes Jahr — abgeschlossen, Simple Past"
+  },
+  {
+    parts:   ["She ", "B0", " as a ballet dancer since she was five when she gave her first performance."],
+    verb:    "train",         tense: "Past Perfect Continuous",
+    answers: [["had been training"]],
+    why:     "Training seit Alter 5 BIS zur ersten Aufführung"
+  },
+  {
+    parts:   ["The evidence ", "B0", " by the criminal before the police searched the house."],
+    verb:    "hide",          tense: "Past Perfect Passive",
+    answers: [["had been hidden"]],
+    why:     "Verstecken VOR der Hausdurchsuchung + Passiv"
+  },
+  {
+    parts:   ["When we arrived at the party, most guests ", "B0", " already."],
+    verb:    "leave",         tense: "Past Perfect Simple",
+    answers: [["had already left"]],
+    why:     "Gäste schon weg VOR unserer Ankunft — 'already'"
+  },
+  {
+    parts:   ["While she ", "B0", " a speech, someone's phone started ringing loudly."],
+    verb:    "give",          tense: "Past Continuous",
+    answers: [["was giving"]],
+    why:     "Rede lief gerade WÄHREND das Handy klingelte"
+  },
+  {
+    parts:   ["The old theatre ", "B0", " already when the new one opened."],
+    verb:    "tear down",     tense: "Past Perfect Passive",
+    answers: [["had already been torn down"]],
+    why:     "Abriss VOR Eröffnung des Neuen + Passiv"
+  },
+  {
+    parts:   ["He ", "B0", " for his keys for twenty minutes when he found them in his pocket."],
+    verb:    "look",          tense: "Past Perfect Continuous",
+    answers: [["had been looking"]],
+    why:     "20 Min. suchen BIS zum Fund — PP Continuous"
+  },
+  {
+    parts:   ["In 1905, Einstein ", "B0", " his theory of relativity."],
+    verb:    "publish",       tense: "Simple Past",
+    answers: [["published"]],
+    why:     "Historisches Ereignis 1905 — Simple Past"
+  },
+  {
+    parts:   ["The windows ", "B0", " just before the guests arrived for the party."],
+    verb:    "clean",         tense: "Past Perfect Passive",
+    answers: [["had been cleaned"]],
+    why:     "Fenster geputzt VOR Gäste-Ankunft + Passiv"
+  },
+  {
+    parts:   ["By the time she graduated, she ", "B0", " for fifty jobs."],
+    verb:    "already / apply", tense: "Past Perfect Simple",
+    answers: [["had already applied"]],
+    why:     "50 Bewerbungen VOR dem Abschluss — 'already'"
+  },
+  {
+    parts:   ["While it ", "B0", " dark outside, the children continued to play in the garden."],
+    verb:    "get",           tense: "Past Continuous",
+    answers: [["was getting"]],
+    why:     "Dunkelheit setzte allmählich ein WÄHREND Kinder spielten"
+  },
+  {
+    parts:   ["He ", "B0", " the piano since he was six when he gave his first concert at 18."],
+    verb:    "practise",      tense: "Past Perfect Continuous",
+    answers: [["had been practising", "had been practicing"]],
+    why:     "Üben seit Alter 6 BIS zum ersten Konzert mit 18"
+  },
+  {
+    parts:   ["The criminal ", "B0", " yet when the journalist wrote the article."],
+    verb:    "not / catch",   tense: "Past Perfect Passive",
+    answers: [["had not been caught", "hadn't been caught"]],
+    why:     "Täter noch frei VOR dem Artikel + Passiv verneint"
+  },
+  {
+    parts:   ["She ", "B0", " the same book three times before she understood its message."],
+    verb:    "read",          tense: "Past Perfect Simple",
+    answers: [["had read"]],
+    why:     "Dreimal lesen VOR dem Verstehen — PP Simple"
+  },
+  {
+    parts:   ["I ", "B0", " at the bus stop for half an hour when it started raining."],
+    verb:    "wait",          tense: "Past Perfect Continuous",
+    answers: [["had been waiting"]],
+    why:     "30 Min. warten BIS zum Regen — PP Continuous"
+  }
+];
+
+const QUIZ_SETS = [QUIZ_SET_1, QUIZ_SET_2, QUIZ_SET_3, QUIZ_SET_4, QUIZ_SET_5];
+
 const QUIZ = [
   {
     parts:   ["When I arrived at the station, the train ", "B0", " already."],
@@ -1656,12 +2370,19 @@ const TRANS = [
 /* ──────────────────────────────────────────────────────────────
    STATE
 ────────────────────────────────────────────────────────────── */
+/* active deck: 'grammar' | 'signals' */
+let activeDeck    = 'grammar';
+let activeDeckArr = CARDS;
+
+/* active quiz set index 0-4 */
+let activeQuizSet = 0;
+
 const state = {
   // cards
   order:      [...CARDS.keys()],
   cardIdx:    0,
   flipped:    false,
-  ratings:    new Array(CARDS.length).fill(null), // null | 'again'|'hard'|'good'|'easy'
+  ratings:    new Array(CARDS.length).fill(null),
 
   // quiz
   quizDone:   false,
@@ -1761,7 +2482,7 @@ function resetTimer() {
 ────────────────────────────────────────────────────────────── */
 function renderCard(animate) {
   const fc   = document.getElementById('flashcard');
-  const card = CARDS[state.order[state.cardIdx]];
+  const card = activeDeckArr[state.order[state.cardIdx]];
 
   // unflip
   state.flipped = false;
@@ -1785,7 +2506,7 @@ function renderCard(animate) {
 
   // counter + progress
   const cur = state.cardIdx + 1;
-  const tot = CARDS.length;
+  const tot = activeDeckArr.length;
   document.getElementById('card-cur').textContent = cur;
   document.getElementById('card-tot').textContent = tot;
   document.getElementById('card-progress').style.width = (cur / tot * 100) + '%';
@@ -1802,7 +2523,7 @@ function flipCard() {
 
 function goCard(delta) {
   const newIdx = state.cardIdx + delta;
-  if (newIdx < 0 || newIdx >= CARDS.length) return;
+  if (newIdx < 0 || newIdx >= activeDeckArr.length) return;
   state.cardIdx = newIdx;
   renderCard(true);
 }
@@ -1869,7 +2590,7 @@ document.querySelectorAll('.rating-btn').forEach(btn => {
     };
     toast(msgs[rating] || '');
 
-    if (state.cardIdx < CARDS.length - 1) {
+    if (state.cardIdx < activeDeckArr.length - 1) {
       setTimeout(() => goCard(1), 300);
     } else {
       const all = state.ratings.filter(r => r !== null).length;
@@ -1900,9 +2621,9 @@ document.getElementById('btn-shuffle').addEventListener('click', () => {
 });
 
 document.getElementById('btn-reset-cards').addEventListener('click', () => {
-  state.order   = [...CARDS.keys()];
+  state.order   = [...activeDeckArr.keys()];
   state.cardIdx = 0;
-  state.ratings = new Array(CARDS.length).fill(null);
+  state.ratings = new Array(activeDeckArr.length).fill(null);
   buildDots();
   renderCard(false);
   toast("Reset — viel Erfolg!");
@@ -1933,7 +2654,8 @@ function buildQuiz() {
   const list = document.getElementById('quiz-list');
   list.innerHTML = '';
 
-  QUIZ.forEach((item, idx) => {
+  const activeQ = QUIZ_SETS[activeQuizSet];
+  activeQ.forEach((item, idx) => {
     const div = document.createElement('div');
     div.className = 'quiz-item';
     div.id = 'qi-' + idx;
@@ -2006,7 +2728,8 @@ function buildQuiz() {
 function checkQuiz(reveal) {
   let score = 0;
 
-  QUIZ.forEach((item, idx) => {
+  const activeQ = QUIZ_SETS[activeQuizSet];
+  activeQ.forEach((item, idx) => {
     const div    = document.getElementById('qi-' + idx);
     const inputs = div.querySelectorAll('.quiz-input');
     const fb     = document.getElementById('qfb-' + idx);
@@ -2050,11 +2773,11 @@ function checkQuiz(reveal) {
     state.quizDone  = true;
     document.getElementById('quiz-pts').textContent = score;
 
-    const pct = Math.round(score / QUIZ.length * 100);
+    const pct = Math.round(score / activeQ.length * 100);
     const banner = document.getElementById('quiz-banner');
     banner.classList.add('show');
     document.getElementById('quiz-pct').textContent  = pct + '%';
-    document.getElementById('quiz-sub').textContent  = `${score} von ${QUIZ.length} richtig`;
+    document.getElementById('quiz-sub').textContent  = `${score} von ${activeQ.length} richtig (Quiz ${activeQuizSet + 1})`;
     document.getElementById('quiz-gbar').style.width = pct + '%';
     document.getElementById('quiz-msg').textContent  = gradeMsg(pct);
     banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2252,6 +2975,52 @@ function fallbackCopy(text) {
 }
 
 /* ──────────────────────────────────────────────────────────────
+   DECK SWITCHER
+────────────────────────────────────────────────────────────── */
+function switchDeck(name) {
+  activeDeck    = name;
+  activeDeckArr = name === 'signals' ? SIGNAL_CARDS : CARDS;
+  state.order   = [...activeDeckArr.keys()];
+  state.cardIdx = 0;
+  state.ratings = new Array(activeDeckArr.length).fill(null);
+
+  // update button styles
+  document.getElementById('deck-grammar').className =
+    'btn' + (name === 'grammar' ? ' btn-primary' : '');
+  document.getElementById('deck-signals').className =
+    'btn' + (name === 'signals' ? ' btn-primary' : '');
+
+  buildDots();
+  renderCard(false);
+  toast(name === 'signals' ? '🔑 Signalwörter-Deck geladen (18 Karten)' : '📚 Grammatik-Deck geladen (15 Karten)');
+}
+
+/* ──────────────────────────────────────────────────────────────
+   QUIZ SET SWITCHER
+────────────────────────────────────────────────────────────── */
+function switchQuizSet(idx) {
+  activeQuizSet = idx;
+
+  // update button styles
+  document.querySelectorAll('#quiz-set-btns .btn').forEach((b, i) => {
+    b.className = 'btn' + (i === idx ? ' btn-primary active-set' : '');
+  });
+
+  // reset quiz state
+  state.quizDone  = false;
+  state.quizScore = 0;
+  document.getElementById('quiz-pts').textContent = 0;
+  document.getElementById('quiz-banner').classList.remove('show');
+  updateGlobal();
+  buildQuiz();
+  resetTimer();
+
+  toast(`Quiz ${idx + 1} geladen — viel Erfolg!`);
+
+  if (!state.timerOn) startTimer();
+}
+
+/* ──────────────────────────────────────────────────────────────
    INIT
 ────────────────────────────────────────────────────────────── */
 (function init() {
@@ -2260,6 +3029,9 @@ function fallbackCopy(text) {
   buildQuiz();
   buildTrans();
   buildCSV();
+  // mark Quiz 1 as active by default
+  const qbtns = document.querySelectorAll('#quiz-set-btns .btn');
+  if (qbtns.length) qbtns[0].classList.add('active-set');
 })();
 </script>
 </body>
