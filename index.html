@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Englisch Trainingscamp — Vergangenheitsformen</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f0f1a;
+      color: #e2e8f0;
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      background: linear-gradient(135deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.3rem;
+    }
+    .subtitle {
+      text-align: center;
+      color: #94a3b8;
+      margin-bottom: 3rem;
+      font-size: 0.95rem;
+    }
+
+    section {
+      background: #1e1e2e;
+      border: 1px solid #2d2d44;
+      border-radius: 12px;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+    }
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #a78bfa;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 2px solid #2d2d44;
+      padding-bottom: 0.6rem;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; font-size: 0.9rem; overflow-x: auto; display: block; }
+    th {
+      background: #2d2d44;
+      color: #c4b5fd;
+      text-align: left;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    td { padding: 0.65rem 0.9rem; border-bottom: 1px solid #2d2d44; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #252538; }
+    code { background: #2d2d44; padding: 0.1em 0.4em; border-radius: 4px; font-family: 'Fira Code', monospace; font-size: 0.85em; color: #7dd3fc; }
+
+    /* Faustregeln */
+    .rules { display: grid; gap: 0.7rem; margin-top: 1.2rem; }
+    .rule {
+      background: #252538;
+      border-left: 3px solid #60a5fa;
+      padding: 0.7rem 1rem;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.9rem;
+    }
+    .rule strong { color: #7dd3fc; }
+
+    /* Flashcards */
+    .csv-box {
+      background: #111120;
+      border: 1px solid #2d2d44;
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.82rem;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.9;
+      color: #94a3b8;
+    }
+    .csv-box span.front { color: #e2e8f0; }
+    .csv-box span.sep { color: #a78bfa; }
+    .csv-box span.back { color: #6ee7b7; }
+
+    /* Quiz */
+    .sentences { list-style: none; counter-reset: item; }
+    .sentences li {
+      counter-increment: item;
+      display: flex;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #2d2d44;
+      font-size: 0.92rem;
+    }
+    .sentences li:last-child { border-bottom: none; }
+    .sentences li::before {
+      content: counter(item) ".";
+      color: #6366f1;
+      font-weight: 700;
+      min-width: 1.8rem;
+      font-size: 0.85rem;
+      padding-top: 0.05rem;
+    }
+    .blank { display: inline-block; min-width: 170px; border-bottom: 2px solid #6366f1; color: transparent; user-select: none; }
+    .verb { color: #f472b6; font-style: italic; font-size: 0.85em; }
+
+    /* Translations */
+    .trans-list { list-style: none; }
+    .trans-list li {
+      padding: 0.9rem 0;
+      border-bottom: 1px solid #2d2d44;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .trans-list li:last-child { border-bottom: none; }
+    .badge {
+      background: #312e81;
+      color: #a5b4fc;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2em 0.6em;
+      border-radius: 20px;
+      white-space: nowrap;
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+    }
+
+    /* Lösungen */
+    .solution-table th { color: #6ee7b7; }
+    .solution-table td:nth-child(2) { color: #6ee7b7; font-weight: 600; font-family: 'Fira Code', monospace; }
+    .solution-table td:nth-child(3) { color: #94a3b8; font-size: 0.85rem; }
+
+    .translation-sol {
+      display: grid;
+      gap: 0.9rem;
+    }
+    .tsol {
+      background: #252538;
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+    }
+    .tsol .tense-tag { font-size: 0.75rem; font-weight: 700; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+    .tsol .german { color: #94a3b8; font-size: 0.88rem; margin-bottom: 0.3rem; }
+    .tsol .english { color: #6ee7b7; font-weight: 600; margin-bottom: 0.3rem; }
+    .tsol .why { color: #64748b; font-size: 0.82rem; font-style: italic; }
+
+    .vault-hint {
+      text-align: center;
+      color: #f59e0b;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 1.2rem;
+      letter-spacing: 0.05em;
+    }
+
+    footer {
+      text-align: center;
+      color: #475569;
+      font-size: 0.8rem;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Englisch Trainingscamp</h1>
+  <p class="subtitle">Vergangenheitsformen · Last-Minute Edition</p>
+
+  <!-- TEIL 1 -->
+  <section>
+    <h2>Teil 1 · Spickzettel</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Zeitform</th>
+          <th>Bildung</th>
+          <th>Signalwörter</th>
+          <th>Beispiel</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Simple Past</strong></td>
+          <td><code>V2</code> / <code>verb+ed</code></td>
+          <td>yesterday, ago, last night, in 1990, then, when</td>
+          <td>She <em>called</em> him yesterday.</td>
+        </tr>
+        <tr>
+          <td><strong>Past Continuous</strong></td>
+          <td><code>was/were + verb+ing</code></td>
+          <td>while, when, at that moment, at 6 o'clock</td>
+          <td>He <em>was sleeping</em> when she called.</td>
+        </tr>
+        <tr>
+          <td><strong>Past Perfect Simple (Active)</strong></td>
+          <td><code>had + V3</code></td>
+          <td>already, before, after, by the time, never … before</td>
+          <td>They <em>had left</em> before I arrived.</td>
+        </tr>
+        <tr>
+          <td><strong>Past Perfect Simple (Passive)</strong></td>
+          <td><code>had + been + V3</code></td>
+          <td>before, already (Fokus auf Objekt, nicht Täter)</td>
+          <td>The letter <em>had been sent</em> before noon.</td>
+        </tr>
+        <tr>
+          <td><strong>Past Perfect Continuous</strong></td>
+          <td><code>had + been + verb+ing</code></td>
+          <td>for, since, how long, all day/week</td>
+          <td>She <em>had been waiting</em> for an hour when the bus arrived.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="rules">
+      <div class="rule">Parallele/unterbrochene Handlung → <strong>Past Continuous</strong> (lang) + <strong>Simple Past</strong> (kurz)</div>
+      <div class="rule">Handlung A vor Handlung B in der Vergangenheit → <strong>Past Perfect</strong></div>
+      <div class="rule">Täter unwichtig / Objekt im Fokus → <strong>+ Passive</strong> (had been + V3)</div>
+      <div class="rule">Dauer BIS zu einem Punkt in der Vergangenheit → <strong>Past Perfect Continuous</strong> (for / since!)</div>
+    </div>
+  </section>
+
+  <!-- TEIL 2 -->
+  <section>
+    <h2>Teil 2 · Karteikarten (CSV für Quizlet / Anki)</h2>
+    <p style="color:#94a3b8;font-size:0.85rem;margin-bottom:1rem;">Quizlet → Importieren → Trennzeichen: <code>;</code></p>
+    <div class="csv-box"><span class="front">Wie bildet man das Simple Past bei regelmäßigen Verben?</span><span class="sep"> ; </span><span class="back">Infinitiv + -ed  (z. B. walk → walked)</span>
+<span class="front">Wie bildet man das Simple Past bei unregelmäßigen Verben?</span><span class="sep"> ; </span><span class="back">2. Spalte der unregelmäßigen Verben (V2)  (z. B. go → went)</span>
+<span class="front">Wie bildet man das Past Continuous?</span><span class="sep"> ; </span><span class="back">was / were + Verb + -ing</span>
+<span class="front">Welche Signalwörter zeigen IMMER Past Continuous an?</span><span class="sep"> ; </span><span class="back">while  und  at that moment</span>
+<span class="front">Ich spielte gestern Fußball.</span><span class="sep"> ; </span><span class="back">I played football yesterday.</span>
+<span class="front">Wie bildet man das Past Perfect Simple (Active)?</span><span class="sep"> ; </span><span class="back">had + past participle (V3)  (z. B. had eaten)</span>
+<span class="front">Er war schon gegangen, als ich ankam.</span><span class="sep"> ; </span><span class="back">He had already left when I arrived.</span>
+<span class="front">Unterschied Past Perfect Simple vs. Past Perfect Continuous?</span><span class="sep"> ; </span><span class="back">Simple = vollendete Handlung / Continuous = Betonung der Dauer</span>
+<span class="front">Wie bildet man das Past Perfect Simple (Passive)?</span><span class="sep"> ; </span><span class="back">had + been + past participle (V3)</span>
+<span class="front">Das Fenster war gebrochen worden, bevor wir ankamen.</span><span class="sep"> ; </span><span class="back">The window had been broken before we arrived.</span>
+<span class="front">Wie bildet man das Past Perfect Continuous?</span><span class="sep"> ; </span><span class="back">had + been + Verb + -ing  (z. B. had been working)</span>
+<span class="front">Sie hatte drei Stunden lang gewartet, als der Zug endlich kam.</span><span class="sep"> ; </span><span class="back">She had been waiting for three hours when the train finally arrived.</span>
+<span class="front">Signalwort für Past Perfect Continuous (Dauer)?</span><span class="sep"> ; </span><span class="back">for  oder  since  (+ Simple-Past-Ereignis)</span>
+<span class="front">Das Buch war bereits veröffentlicht worden. (Passive!)</span><span class="sep"> ; </span><span class="back">The book had already been published.</span>
+<span class="front">Ich las gerade ein Buch, als das Telefon klingelte.</span><span class="sep"> ; </span><span class="back">I was reading a book when the phone rang.</span></div>
+  </section>
+
+  <!-- TEIL 3 -->
+  <section>
+    <h2>Teil 3 · Lückentext Quiz — Hardcore</h2>
+    <p style="color:#94a3b8;font-size:0.85rem;margin-bottom:1.2rem;">Setze das Verb in der richtigen Zeitform ein. Lösungen → Teil 5.</p>
+    <ol class="sentences">
+      <li>When I arrived at the station, the train <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(leave)</span> already.</li>
+      <li>She <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(study)</span> for two hours before she finally understood the concept.</li>
+      <li>The cake <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(eat)</span> by the time we got home. There was nothing left!</li>
+      <li>While Tom <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(repair)</span> the car, it started to rain heavily.</li>
+      <li>I <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(never / see)</span> such a beautiful sunset before that evening.</li>
+      <li>By 8 p.m., all the guests <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(invite)</span> and the party <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(start)</span>.</li>
+      <li>The children <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(play)</span> in the garden when the storm suddenly broke out.</li>
+      <li>The report <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(finish)</span> by the team before the deadline last Monday.</li>
+      <li>She was exhausted because she <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(run)</span> for over an hour.</li>
+      <li>He <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(read)</span> the newspaper when his boss walked in.</li>
+      <li>After the scientists <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(discover)</span> the new planet, they celebrated for weeks.</li>
+      <li>The old bridge <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(destroy)</span> before the new one was built.</li>
+      <li>I realised that I <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(forget)</span> my wallet at home.</li>
+      <li>They <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(argue)</span> for thirty minutes before they finally calmed down.</li>
+      <li>The documents <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(sign)</span> by the director before the meeting started.</li>
+      <li>Last summer, we <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(visit)</span> Paris for the first time.</li>
+      <li>When she opened the fridge, she noticed that all the milk <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(drink)</span>.</li>
+      <li>The mechanic <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(work)</span> on the engine for four hours when the owner arrived.</li>
+      <li>He <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(not / finish)</span> his homework yet when his mother called him for dinner.</li>
+      <li>While the teacher <span class="blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="verb">(explain)</span> the grammar rule, two students fell asleep.</li>
+    </ol>
+  </section>
+
+  <!-- TEIL 4 -->
+  <section>
+    <h2>Teil 4 · Übersetzungs-Challenge</h2>
+    <p style="color:#94a3b8;font-size:0.85rem;margin-bottom:1.2rem;">Übersetze vollständig ins Englische. Lösungen → Teil 5.</p>
+    <ul class="trans-list">
+      <li><span class="badge">Simple Past</span> Gestern Abend sah ich einen interessanten Film und ging danach früh ins Bett.</li>
+      <li><span class="badge">Past Continuous</span> Als das Erdbeben begann, schlief die ganze Familie noch tief und fest.</li>
+      <li><span class="badge">PP Simple Active</span> Als wir im Restaurant ankamen, hatten die anderen bereits mit dem Essen angefangen.</li>
+      <li><span class="badge">PP Simple Passive</span> Das neue Rathaus war bereits fertiggestellt worden, bevor der Bürgermeister sein Amt antrat.</li>
+      <li><span class="badge">PP Continuous</span> Er hatte seit seinem zwölften Lebensjahr Gitarre gespielt, als er seinen ersten Auftritt hatte.</li>
+    </ul>
+  </section>
+
+  <!-- TEIL 5 -->
+  <section>
+    <h2>Teil 5 · Lösungs-Tresor</h2>
+    <p class="vault-hint">⚠ ERST SELBST VERSUCHEN — DANN HIER SCHAUEN ⚠</p>
+
+    <h2 style="font-size:0.9rem;margin-bottom:0.8rem;">Lückentext (Teil 3)</h2>
+    <table class="solution-table">
+      <thead>
+        <tr><th>Nr.</th><th>Lösung</th><th>Begründung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>had left</td><td>Zug weg VOR meiner Ankunft — Vorvergangenheit</td></tr>
+        <tr><td>2</td><td>had been studying</td><td>Dauer (2h) BIS zum Verstehen — PP Continuous</td></tr>
+        <tr><td>3</td><td>had been eaten</td><td>Vorvergangenheit + Passiv: Täter unwichtig</td></tr>
+        <tr><td>4</td><td>was repairing</td><td>Laufende Handlung, durch Regen unterbrochen</td></tr>
+        <tr><td>5</td><td>had never seen</td><td>Erfahrung bis zu jenem Abend — Vorvergangenheit</td></tr>
+        <tr><td>6</td><td>had been invited / had started</td><td>Beide Handlungen VOR 20 Uhr abgeschlossen</td></tr>
+        <tr><td>7</td><td>were playing</td><td>Laufende Handlung, durch Sturm unterbrochen</td></tr>
+        <tr><td>8</td><td>had been finished</td><td>Vorvergangenheit + Passiv: fertig VOR Deadline</td></tr>
+        <tr><td>9</td><td>had been running</td><td>Dauer = Ursache für Erschöpfung — PP Continuous</td></tr>
+        <tr><td>10</td><td>was reading</td><td>Laufende Handlung beim Eintreten des Chefs</td></tr>
+        <tr><td>11</td><td>had discovered</td><td>Entdeckung VOR der Feier — Vorvergangenheit</td></tr>
+        <tr><td>12</td><td>had been destroyed</td><td>Abriss VOR Neubau + Passiv</td></tr>
+        <tr><td>13</td><td>had forgotten</td><td>Vergessen vor dem Realisieren — Vorvergangenheit</td></tr>
+        <tr><td>14</td><td>had been arguing</td><td>Streit dauerte 30 Min. BIS zur Beruhigung</td></tr>
+        <tr><td>15</td><td>had been signed</td><td>Unterschrift VOR Meeting + Passiv</td></tr>
+        <tr><td>16</td><td>visited</td><td>Abgeschlossene Handlung — "last summer"</td></tr>
+        <tr><td>17</td><td>had been drunk</td><td>Milch weg VOR dem Öffnen + Passiv</td></tr>
+        <tr><td>18</td><td>had been working</td><td>4h Dauer BIS zur Ankunft — PP Continuous</td></tr>
+        <tr><td>19</td><td>had not finished</td><td>Hausaufgaben noch offen VOR dem Rufen</td></tr>
+        <tr><td>20</td><td>was explaining</td><td>Laufende Handlung — Schüler schliefen WÄHREND</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="font-size:0.9rem;margin:1.5rem 0 0.8rem;">Übersetzungen (Teil 4)</h2>
+    <div class="translation-sol">
+      <div class="tsol">
+        <div class="tense-tag">Simple Past</div>
+        <div class="german">Gestern Abend sah ich einen interessanten Film und ging danach früh ins Bett.</div>
+        <div class="english">Yesterday evening, I watched an interesting film and went to bed early afterwards.</div>
+        <div class="why">Abgeschlossene Handlungen gestern Abend — einfache Vergangenheit</div>
+      </div>
+      <div class="tsol">
+        <div class="tense-tag">Past Continuous</div>
+        <div class="german">Als das Erdbeben begann, schlief die ganze Familie noch tief und fest.</div>
+        <div class="english">When the earthquake began, the whole family was still fast asleep.</div>
+        <div class="why">Andauernder Zustand beim Eintreten des Erdbebens</div>
+      </div>
+      <div class="tsol">
+        <div class="tense-tag">Past Perfect Simple Active</div>
+        <div class="german">Als wir im Restaurant ankamen, hatten die anderen bereits mit dem Essen angefangen.</div>
+        <div class="english">When we arrived at the restaurant, the others had already started eating.</div>
+        <div class="why">Essen begann VOR unserer Ankunft — Vorvergangenheit aktiv</div>
+      </div>
+      <div class="tsol">
+        <div class="tense-tag">Past Perfect Simple Passive</div>
+        <div class="german">Das neue Rathaus war bereits fertiggestellt worden, bevor der Bürgermeister sein Amt antrat.</div>
+        <div class="english">The new town hall had already been completed before the mayor took office.</div>
+        <div class="why">Fertigstellung VOR Amtsantritt, Täter unwichtig — Vorvergangenheit Passiv</div>
+      </div>
+      <div class="tsol">
+        <div class="tense-tag">Past Perfect Continuous</div>
+        <div class="german">Er hatte seit seinem zwölften Lebensjahr Gitarre gespielt, als er seinen ersten Auftritt hatte.</div>
+        <div class="english">He had been playing the guitar since he was twelve when he had his first performance.</div>
+        <div class="why">Dauer seit 12 Jahren BIS zum ersten Auftritt — PP Continuous</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>Viel Erfolg morgen! Du schaffst das.</footer>
+</div>
+</body>
+</html>
