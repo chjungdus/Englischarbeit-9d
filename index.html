@@ -2663,7 +2663,7 @@ function buildQuiz() {
     // header
     const numEl = document.createElement('div');
     numEl.className = 'qi-num';
-    numEl.innerHTML = `Satz ${idx + 1} <span class="qi-tense">${item.tense}</span>`;
+    numEl.textContent = `Satz ${idx + 1}`;
     div.appendChild(numEl);
 
     // sentence
